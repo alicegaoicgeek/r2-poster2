@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>R2-AIOS-1314520 · 统一运行时</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #141414;
+    --line: #C9C4BC;
+    --warm1: #F0ECDF;
+    --warm2: #E8E3D6;
+    --dark: #141414;
+    --orange: #E8501F;
+    --muted: #5A5650;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .poster {
+    width: 1080px;
+    height: 1440px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+  .rule {
+    height: 6px;
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    flex-shrink: 0;
+  }
+  .rule .o { background: var(--orange); }
+  .rule .b { background: var(--ink); }
+
+  .header {
+    flex-shrink: 0;
+    padding: 11px 28px 8px;
+    border-bottom: 1px solid var(--ink);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+  .title {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .title .r2 { color: var(--orange); }
+  .subtitle {
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .meta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    text-align: right;
+    line-height: 1.55;
+    color: var(--muted);
+    padding-bottom: 2px;
+  }
+  .meta b { color: var(--ink); }
+
+  .anchor {
+    flex-shrink: 0;
+    background: var(--dark);
+    color: #F7F4EF;
+    padding: 9px 28px;
+  }
+  .anchor .lab {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+  }
+  .anchor .slogan {
+    margin-top: 3px;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .anchor .slogan b { color: var(--orange); }
+  .anchor .sub {
+    margin-top: 5px;
+    font-size: 13.5px;
+    color: #C9C4BC;
+    line-height: 1.4;
+  }
+  .anchor .sub em {
+    font-style: normal;
+    color: #F7F4EF;
+    font-weight: 700;
+  }
+
+  .body {
+    flex: 1;
+    min-height: 0;
+    padding: 8px 28px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .body > div {
+    flex: 0 0 auto;
+  }
+
+  .sec-head {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: end;
+    gap: 6px;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 3px;
+  }
+  .sec-num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+  }
+  .sec-title {
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .sec-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    padding-bottom: 1px;
+  }
+
+  /* 01 disease */
+  .diag {
+    border: 1px solid var(--ink);
+    border-top: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .diag .col {
+    padding: 8px 10px;
+    border-right: 1px solid var(--ink);
+  }
+  .diag .col:last-child { border-right: none; background: var(--warm1); }
+  .diag .k {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.06em;
+    margin-bottom: 3px;
+  }
+  .diag .t {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .diag-note {
+    border: 1px solid var(--ink);
+    border-top: none;
+    background: var(--dark);
+    color: #F7F4EF;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .diag-note b { color: var(--orange); }
+
+  /* 02 法术势 */
+  .fss {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border: 1px solid var(--ink);
+    border-top: none;
+  }
+  .fss .cell {
+    border-right: 1px solid var(--ink);
+    padding: 8px 10px 9px;
+  }
+  .fss .cell:last-child { border-right: none; }
+  .fss .cell:nth-child(1) { background: var(--warm2); }
+  .fss .cell:nth-child(2) { background: var(--warm1); }
+  .fss .cell:nth-child(3) { background: var(--bg); }
+  .fss .zh {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .fss .zh b { color: var(--orange); }
+  .fss .en {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .fss .mean {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+  .fss .map {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+  .fss-mul {
+    border: 1px solid var(--ink);
+    border-top: none;
+    background: var(--warm1);
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .fss-mul b { color: var(--orange); }
+
+  /* 03 seven bricks */
+  .bricks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--ink);
+    border-top: none;
+  }
+  .brick {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 6px;
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--ink);
+    align-items: start;
+  }
+  .brick:nth-child(2n) { border-right: none; }
+  .brick:nth-last-child(-n+1) { border-bottom: none; }
+  .brick:nth-child(4n+1),
+  .brick:nth-child(4n+2) { background: var(--warm1); }
+  .brick:nth-child(4n+3),
+  .brick:nth-child(4n+4) { background: var(--bg); }
+  .brick.full {
+    grid-column: 1 / -1;
+    border-right: none;
+    background: var(--dark) !important;
+    color: #F7F4EF;
+    border-bottom: none;
+  }
+  .brick .n {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1.1;
+  }
+  .brick .qin {
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .brick .r2 {
+    font-size: 13.5px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin: 1px 0 2px;
+  }
+  .brick .d {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .brick.full .d { color: #C9C4BC; }
+  .brick.full .qin { color: #F7F4EF; }
+
+  /* 04 compare */
+  .cmp {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--ink);
+    border-top: none;
+  }
+  .cmp .side {
+    border-right: 1px solid var(--ink);
+  }
+  .cmp .side:last-child { border-right: none; }
+  .cmp .hd {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 5px 9px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .cmp .side:first-child .hd { background: var(--warm2); color: var(--muted); }
+  .cmp .side:last-child .hd { background: var(--dark); color: var(--orange); }
+  .cmp .row {
+    padding: 6px 9px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+  }
+  .cmp .row:last-child { border-bottom: none; }
+  .cmp .side:first-child .row:nth-child(even) { background: var(--bg); }
+  .cmp .side:first-child .row:nth-child(odd) { background: var(--warm1); }
+  .cmp .side:last-child .row:nth-child(even) { background: var(--warm1); }
+  .cmp .side:last-child .row:nth-child(odd) { background: var(--bg); }
+  .cmp .side:last-child .row { font-weight: 700; }
+
+  /* 05 accept + map */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 0;
+    border: 1px solid var(--ink);
+    border-top: none;
+  }
+  .accept {
+    border-right: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .accept .hd, .maptbl .hd {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.08em;
+    padding: 5px 10px 4px;
+    background: var(--warm2);
+    border-bottom: 1px solid var(--line);
+  }
+  .aq {
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  .aq:last-child { border-bottom: none; }
+  .aq b {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--orange);
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .aq:nth-child(even) { background: var(--warm1); }
+  .maptbl {
+    display: flex;
+    flex-direction: column;
+  }
+  .mrow {
+    display: grid;
+    grid-template-columns: 28px 1fr 1.15fr;
+    gap: 4px;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .mrow:last-child { border-bottom: none; }
+  .mrow:nth-child(even) { background: var(--warm1); }
+  .mrow .n {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    color: var(--orange);
+    font-size: 14px;
+  }
+  .mrow .qin { font-weight: 700; }
+  .mrow .r2m { font-weight: 600; color: var(--muted); }
+
+  .thirty {
+    border: 1px solid var(--ink);
+    border-top: none;
+    background: var(--warm2);
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .thirty b { color: var(--orange); }
+
+  .footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--ink);
+    background: var(--dark);
+    color: #F7F4EF;
+    padding: 8px 28px 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+  .footer .one {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .footer .one b { color: var(--orange); }
+  .footer .right {
+    text-align: right;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: #C9C4BC;
+    line-height: 1.5;
+  }
+  .footer .brand {
+    color: #F7F4EF;
+    font-weight: 700;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="rule"><div class="o"></div><div class="b"></div></div>
+
+  <header class="header">
+    <div>
+      <div class="title"><span class="r2">R2-</span>AIOS-1314520</div>
+      <div class="subtitle">给芯片研发装一套「统一运行时」</div>
+    </div>
+    <div class="meta">
+      秦式统一 × 芯片工程<br />
+      <b>法 · 术 · 势</b> 乘积为 1<br />
+      裸机智能 → 统一 OS
+    </div>
+  </header>
+
+  <div class="anchor">
+    <div class="lab">ANCHOR · 三句口号</div>
+    <div class="slogan">让 AI <b>执行</b> · 让机器 <b>裁判</b> · 让人 <b>签核</b></div>
+    <div class="sub">
+      把各自为政的「裸机智能」升级成：统一标准 · 统一调度 · 统一裁判 · <em>有人最终负责</em> 的操作系统。
+      内核：<em>Harness × Oracle × Memory × Loop</em>——一项为零，整体为零。
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- 01 -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-num">01</div>
+        <div class="sec-title">先说病 · 不是缺更强的兵，是缺统一的国</div>
+        <div class="sec-tag">DIAGNOSIS</div>
+      </div>
+      <div class="diag">
+        <div class="col">
+          <div class="k">战国 · 秦之前</div>
+          <div class="t">六国各有文字、度量、车轨。一道诏书要翻译六次——不是缺勇士，是行政装不上。</div>
+        </div>
+        <div class="col">
+          <div class="k">芯片团队 · 今天</div>
+          <div class="t">模型更强、工具更多、Agent 更勤快，交付物却拼不起来——不是缺更强 AI，是缺能指挥得动的工程秩序。</div>
+        </div>
+      </div>
+      <div class="diag-note">
+        R2 与秦同构：不是再买一个更强的 AI，是做「统一文字 / 车规 / 度量衡 / 组织 / 驰道」，最后人还握印。
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-num">02</div>
+        <div class="sec-title">总开关 · 法 · 术 · 势（缺一不可）</div>
+        <div class="sec-tag">FA · SHU · SHI</div>
+      </div>
+      <div class="fss">
+        <div class="cell">
+          <div class="zh"><b>法</b></div>
+          <div class="en">RULES</div>
+          <div class="mean">规矩写清楚，大家认同一套</div>
+          <div class="map">谁能改什么 · 何时该停 · 什么叫对错<br />内核 Harness × Oracle × Memory × Loop · 权限边界</div>
+        </div>
+        <div class="cell">
+          <div class="zh"><b>术</b></div>
+          <div class="en">MEANS</div>
+          <div class="mean">真有手段落到地上</div>
+          <div class="map">20 类 EDA · 11 类垂域 Skill · 各产线工具<br />会干活，而不是墙上制度</div>
+        </div>
+        <div class="cell">
+          <div class="zh"><b>势</b></div>
+          <div class="en">COMMAND</div>
+          <div class="mean">指挥不指挥得动</div>
+          <div class="map">四角色 · 五主线 · 人签核<br />Agent 跑在哪 · 数据从哪进 · 指挥链真有效</div>
+        </div>
+      </div>
+      <div class="fss-mul">
+        有法术无势 → 权力链一断全塌　｜　有术无法 → 只会干无标准　｜　有法无术 → 制度落不了地
+        <br /><b>乘号铁律：</b>Harness × Oracle × Memory × Loop，一项为零，整体为零。
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-num">03</div>
+        <div class="sec-title">1314520 · 七项「统一工程」</div>
+        <div class="sec-tag">SEVEN BRICKS · 非彩头</div>
+      </div>
+      <div class="bricks">
+        <div class="brick">
+          <div class="n">1</div>
+          <div>
+            <div class="qin">书同文</div>
+            <div class="r2">r2-specx · 统一真理源</div>
+            <div class="d">Spec → 结构化 SSoT · 十二条元信息 · 六条产线同源 · 改一处改该改的一切</div>
+          </div>
+        </div>
+        <div class="brick">
+          <div class="n">3</div>
+          <div>
+            <div class="qin">车同轨 · 管「车」</div>
+            <div class="r2">三刀法 · 统一调度</div>
+            <div class="d">特性隔离 · 短闭环 · 发布火车 · 上车单元规范，不撞车不串味</div>
+          </div>
+        </div>
+        <div class="brick">
+          <div class="n">11</div>
+          <div>
+            <div class="qin">统一货币</div>
+            <div class="r2">十一类 Skills · 能力媒介</div>
+            <div class="d">Skill Hub 流通验证/前后端能力 · 散装 md 是铜板碎片 · 进产线才是通货</div>
+          </div>
+        </div>
+        <div class="brick">
+          <div class="n">4</div>
+          <div>
+            <div class="qin">郡县制</div>
+            <div class="r2">四角色 · AINative 权限</div>
+            <div class="d">Peter 目标 · Andy 接口 · Vicky 契约 · Fred 产线 · Agent 自主 ≠ 人弃权</div>
+          </div>
+        </div>
+        <div class="brick">
+          <div class="n">5</div>
+          <div>
+            <div class="qin">驰道网 · 管「道」</div>
+            <div class="r2">五主线 · 统一基础设施</div>
+            <div class="d">探索→集成→交付→验证→进化 · 标准定义对 · 主线把对的东西送到执行单元</div>
+          </div>
+        </div>
+        <div class="brick">
+          <div class="n">20</div>
+          <div>
+            <div class="qin">统一度量衡</div>
+            <div class="r2">二十 r2-eda / Oracle</div>
+            <div class="d">确定性工具裁判 · 全绿才停 · 写 RTL 的不能同时当唯一裁判</div>
+          </div>
+        </div>
+        <div class="brick full">
+          <div class="n">0</div>
+          <div>
+            <div class="qin">皇帝裁决</div>
+            <div class="r2">人签核 + 条件独立 · 最终权威</div>
+            <div class="d">Agent 可跑到 Oracle 全绿；品味与责任仍归人——验什么、验到哪、何时收手。0 不是软弱，是责任边界。收敛之后的「算不算够」不可外包给模型。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-num">04</div>
+        <div class="sec-title">和「只会用 AI」差在哪</div>
+        <div class="sec-tag">BARE · VS · R2</div>
+      </div>
+      <div class="cmp">
+        <div class="side">
+          <div class="hd">裸机玩法</div>
+          <div class="row">每个系统/工具各接一套，Agent 满地找</div>
+          <div class="row">模型自己说完成</div>
+          <div class="row">人越多 / Agent 越多越好</div>
+          <div class="row">标准写在 PPT</div>
+          <div class="row">能人一走经验蒸发</div>
+        </div>
+        <div class="side">
+          <div class="hd">R2 · 秦式统一</div>
+          <div class="row">先书同文，智能在同一秩序里跑</div>
+          <div class="row">度量衡（Oracle）独立判定</div>
+          <div class="row">势 = 指挥得动多少，不是堆多少</div>
+          <div class="row">标准在 SSoT，主线当驰道传下去</div>
+          <div class="row">Memory / 闭环 ≈ 汉承秦制，不从零开始</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-num">05</div>
+        <div class="sec-title">怎么验收 · 映射速查</div>
+        <div class="sec-tag">法 / 术 / 势 · 硬问三句</div>
+      </div>
+      <div class="bottom-grid">
+        <div class="accept">
+          <div class="hd">ACCEPT · 只问三句</div>
+          <div class="aq"><b>法</b>大家是否共用一个 Spec 真理源？对错是否机器可判？</div>
+          <div class="aq"><b>术</b>Skill 和 EDA 是否在这套规矩里干活，而不是野路子？</div>
+          <div class="aq"><b>势</b>指令下去，人/AI 听谁的？加智能是增强还是失控？最后谁签字？</div>
+        </div>
+        <div class="maptbl">
+          <div class="hd">MAP · 1314520 定稿</div>
+          <div class="mrow"><span class="n">1</span><span class="qin">书同文</span><span class="r2m">r2-specx</span></div>
+          <div class="mrow"><span class="n">3</span><span class="qin">车同轨（车）</span><span class="r2m">三刀法</span></div>
+          <div class="mrow"><span class="n">11</span><span class="qin">统一货币</span><span class="r2m">十一类 Skills</span></div>
+          <div class="mrow"><span class="n">4</span><span class="qin">郡县制</span><span class="r2m">四角色 · AINative</span></div>
+          <div class="mrow"><span class="n">5</span><span class="qin">驰道网（道）</span><span class="r2m">五主线</span></div>
+          <div class="mrow"><span class="n">20</span><span class="qin">统一度量衡</span><span class="r2m">二十 r2-eda / Oracle</span></div>
+          <div class="mrow"><span class="n">0</span><span class="qin">皇帝裁决</span><span class="r2m">人签核</span></div>
+        </div>
+      </div>
+      <div class="thirty">
+        <b>30 秒：</b>1 书同文 · <b>3 车同轨（管车）</b> · 11 能力货币 · 4 郡县角色 · <b>5 驰道网（管道）</b> · 20 度量衡裁判 · 0 人签核。
+        法定规矩，术能落地，<b>势是指挥人和 AI 都指挥得动</b>。三者乘在一起，才叫 R2-AIOS-1314520。
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="one">
+      秦停在「统一」；R2 还要「统一之后还能进化」——<b>Memory × Loop</b>，避免势随某个人离开而塌。
+    </div>
+    <div class="right">
+      <div class="brand">R2芯片智能体</div>
+      R2 · CHIP · AGENT<br />
+      AIOS · 统一运行时
+    </div>
+  </footer>
+</div>
+</body>
+</html>

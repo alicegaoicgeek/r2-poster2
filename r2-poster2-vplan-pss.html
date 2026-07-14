@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:48px 80px 44px;display:flex;flex-direction:column}
+  .poster>*{flex-shrink:0;min-height:0}
+
+  .r2-label{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.12em;margin-bottom:20px}
+  .hero-row{display:flex;align-items:baseline;gap:20px;margin-bottom:8px}
+  .hero-num{font-family:var(--mono);font-size:200px;font-weight:800;color:var(--accent);line-height:0.84;letter-spacing:-0.04em}
+  .hero-text{flex:1;min-width:0}
+  .hero-text .main{font-size:48px;font-weight:700;line-height:1.15;color:var(--text)}
+  .hero-text .sub{font-size:26px;font-weight:400;color:var(--text2);margin-top:6px;line-height:1.25}
+  .rule{height:2px;background:var(--accent);margin:28px 0 24px}
+  .insight{font-size:24px;line-height:1.45;color:var(--text2);margin-bottom:32px;max-height:72px;overflow:hidden}
+  .insight em{font-style:normal;color:var(--accent);font-weight:600}
+
+  .cat-grid{margin-bottom:28px}
+  .section-label{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text3);letter-spacing:0.08em;margin-bottom:12px}
+  .cat-row{display:flex;align-items:flex-start;border-top:1px solid var(--rule2);padding:10px 0}
+  .cat-row:first-of-type{border-top:2px solid var(--text)}
+  .cat-row:last-of-type{border-bottom:2px solid var(--text)}
+  .cat-idx{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--accent);min-width:40px;line-height:1.25;padding-top:2px}
+  .cat-body{flex:1;min-width:0}
+  .cat-title{font-size:26px;font-weight:600;color:var(--text);line-height:1.25}
+  .cat-detail{font-size:24px;color:var(--text2);line-height:1.35;margin-top:2px;max-height:34px;overflow:hidden;overflow-wrap:break-word}
+
+  .ref-table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:24px}
+  .ref-table th{font-size:17px;font-weight:500;color:var(--text3);letter-spacing:0.06em;text-align:left;padding:6px 0 8px;border-bottom:2px solid var(--text)}
+  .ref-table td{font-size:22px;padding:8px 0;border-bottom:1px solid var(--rule2);color:var(--text2);line-height:1.3;overflow-wrap:break-word}
+  .ref-table td:first-child{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--text)}
+  .ref-table tr:last-child td{border-bottom:none}
+  .col-a{width:22%}.col-b{width:38%}.col-c{width:40%}
+
+  .quote-block{border-left:3px solid var(--accent);padding-left:16px;margin-bottom:8px}
+  .quote-text{font-size:24px;line-height:1.45;color:var(--text);font-weight:500;max-height:72px;overflow:hidden}
+
+  .footer{margin-top:auto;display:flex;justify-content:flex-end;padding-top:12px}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+
+  <div class="r2-label">R2 · 验证方法学</div>
+
+  <div class="hero-row">
+    <div class="hero-num">5</div>
+    <div class="hero-text">
+      <div class="main">从文档到基础设施</div>
+      <div class="sub">VPlan 五层 × PSS 可移植激励</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="insight"><em>VPlan 是问卷</em>——回答验什么；<em>PSS 是意图语法</em>——同一份 action 模型映射仿真·Emulation·QEMU 三出口，Checker 绑定覆盖率，Oracle 做 e=r-y 签核。</div>
+
+  <div class="cat-grid">
+    <div class="section-label">五层方法论</div>
+    <div class="cat-row">
+      <div class="cat-idx">01</div>
+      <div class="cat-body">
+        <div class="cat-title">认知框架</div>
+        <div class="cat-detail">坐标系从 TB 移到 DUT，使命声明锁死验什么/不验什么</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">02</div>
+      <div class="cat-body">
+        <div class="cat-title">分析拆解</div>
+        <div class="cat-detail">DITL 侦探视角 → 10–15 条 mini-DITL → Feature 矩阵</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">03</div>
+      <div class="cat-body">
+        <div class="cat-title">量化绑定</div>
+        <div class="cat-detail">每条 covergroup 必须绑 checker，MECE 防假绿</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">04</div>
+      <div class="cat-body">
+        <div class="cat-title">执行引擎</div>
+        <div class="cat-detail">PSS exec body / DOM Parser 驱动 CI 回归与多平台落地</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">05</div>
+      <div class="cat-body">
+        <div class="cat-title">判定架构</div>
+        <div class="cat-detail">五层 Oracle：L2–L4 机械比较，绿放行红退回</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <colgroup><col class="col-a"><col class="col-b"><col class="col-c"></colgroup>
+    <thead><tr><th>PSS 构造</th><th>VPlan 落点</th><th>工程含义</th></tr></thead>
+    <tbody>
+      <tr><td>action</td><td>Feature / Testpoint</td><td>声明 DUT 行为意图，不写 TB 细节</td></tr>
+      <tr><td>buffer/stream</td><td>DITL 数据流</td><td>input/output 定义站间数据契约</td></tr>
+      <tr><td>constraint</td><td>四类场景边界</td><td>独立/混合/合法异常/非法场景空间</td></tr>
+      <tr><td>exec body</td><td>第四层执行引擎</td><td>映射 UVM sequence / C 固件 / Emu</td></tr>
+      <tr><td>activity</td><td>并发回归编排</td><td>parallel · schedule 驱动混合场景</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quote-block">
+    <div class="quote-text">我们数了每一辆经过的车，却从未检查车里装的货对不对——问卷写错了，答卷不可能对。</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-mark"><div class="sq"></div><div class="txt">R2芯片智能体</div></div>
+  </div>
+
+</div></body></html>

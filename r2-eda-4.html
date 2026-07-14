@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #555; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:48px 88px 36px;display:flex;flex-direction:column}
+
+  .r2-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+  .r2-badge .sq{width:8px;height:8px;background:var(--accent)}
+  .r2-badge .txt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:0.14em}
+
+  h1{font-size:44px;font-weight:700;line-height:1.15;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px}
+  h1 .hl{color:var(--accent)}
+
+  .rule{width:56px;height:2px;background:var(--accent);margin-bottom:24px}
+
+  .section{margin-bottom:10px}
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .sec-num{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);line-height:1.2;min-width:28px}
+  .sec-title{font-size:28px;font-weight:700;color:var(--text);line-height:1.25}
+
+  .body-text{font-size:24px;font-weight:400;color:var(--text2);line-height:1.35;margin-bottom:2px;overflow-wrap:break-word}
+  .body-text .hl{color:var(--accent);font-weight:600}
+
+  .quote{font-size:24px;font-weight:400;color:var(--text2);line-height:1.35;margin-bottom:2px;padding:2px 0 2px 14px;border-left:2px solid var(--accent);overflow-wrap:break-word}
+
+  .rule-section{width:100%;height:1px;background:var(--rule);border:none;margin:2px 0 10px 0}
+
+  .footer{margin-top:10px;display:flex;justify-content:flex-end}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+
+  <div class="r2-badge">
+    <div class="sq"></div>
+    <div class="txt">R2-EDA</div>
+  </div>
+
+  <h1><span class="hl">慢和脏</span>，才是智能体的护城河。</h1>
+
+  <div class="rule"></div>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">内层是快和干净。</span>
+    </div>
+    <div class="quote">"编码 Agent 编写代码、测试其工作成果、不断迭代，直到代码无 bug 且符合规格要求"</div>
+    <div class="body-text">这一层已经跑通了。</div>
+    <div class="body-text">15 个工具，AI 用它们比人快 1000 倍，人脑是 CPU，AI 是 GPU。</div>
+    <div class="body-text">但快和干净，<span class="hl">不是护城河</span>。</div>
+    <div class="body-text">"供应商提供一半能力"——工具层可以采购。</div>
+    <div class="body-text">一个智能体跑得快，换一个也能跑这么快。</div>
+  </div>
+
+  <hr class="rule-section">
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">护城河在慢和脏。</span>
+    </div>
+    <div class="quote">"开发者在看到实现成果后，会更新规格说明"</div>
+    <div class="quote">"人类相较于当前 AI 系统拥有一个显著的上下文优势"</div>
+    <div class="quote">"只要人类知道 AI 不知道的事情，就需要人类将这些知识注入系统"</div>
+    <div class="body-text"><span class="hl">慢</span>——不是代码跑得慢，是方向校准慢。</div>
+    <div class="body-text">每一次看到成品才发现想错了，每一次改了 Spec 再重做，每一次把新的理解重新注入系统。</div>
+    <div class="body-text"><span class="hl">脏</span>——不是代码写得脏，是经验积累的过程脏。</div>
+    <div class="quote">"发现 Agent 总在同一个地方犯错，就补充一套 Eval 把场景固定下来"</div>
+    <div class="body-text">每一次踩坑，补一条规则；每一次失败，留一条决策路径。</div>
+    <div class="body-text">不断犯错，一点点攒下来。</div>
+    <div class="body-text">外层——"发布给 alpha 测试者，或投入生产环境进行 A/B 测试"</div>
+    <div class="body-text">真实世界反馈 → 修正判断 → 更新 Spec → 重新注入系统。</div>
+    <div class="quote">"这个能力是无法通过采购来达成的，或者至少一半一半，供应商一半，团队自己做好另一半"</div>
+  </div>
+
+  <hr class="rule-section">
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">让 AI 执行，让机器裁判，让人校准。</span>
+    </div>
+    <div class="body-text">快的那层 AI 做。</div>
+    <div class="body-text">裁判标准从踩坑中沉淀进系统，机器自动跑。</div>
+    <div class="body-text">人把每一次犯错攒成智能体的下一次起点——</div>
+    <div class="body-text">这就是智能体的护城河。</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-mark">
+      <div class="sq"></div>
+      <div class="txt">R2芯片智能体</div>
+    </div>
+  </div>
+
+</div></body></html>

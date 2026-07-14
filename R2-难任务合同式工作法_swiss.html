@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>R2-难任务合同式工作法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #141414;
+    --orange: #E8501F;
+    --row: #F0ECDF;
+    --row2: #E8E3D6;
+    --line: #C9C4BC;
+    --dim: #5a5a5a;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Noto Sans SC', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1080px; height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: grid;
+    grid-template-rows: 6px auto auto 1fr auto;
+  }
+
+  .ruler {
+    background: #141414;
+    background-image: linear-gradient(90deg, #E8501F 0 72px, #141414 72px);
+  }
+
+  .header {
+    padding: 12px 24px 9px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .title {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.4px;
+  }
+  .title .r2 { color: var(--orange); }
+  .sub {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--dim);
+    line-height: 1.35;
+  }
+
+  .anchor {
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 24px;
+  }
+  .anchor .lab {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--orange);
+    margin-bottom: 2px;
+  }
+  .anchor .txt {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.38;
+  }
+  .anchor em { color: var(--orange); font-style: normal; }
+
+  .main {
+    padding: 8px 24px 6px;
+    display: grid;
+    grid-template-rows: auto minmax(200px, 1.1fr) minmax(180px, 1fr) minmax(220px, 1.15fr);
+    gap: 6px;
+    min-height: 0;
+  }
+
+  .sec {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--bg);
+  }
+  .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--row2);
+    border-bottom: 1px solid var(--ink);
+    flex-shrink: 0;
+  }
+  .num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--orange);
+    min-width: 22px;
+  }
+  .sec-h h3 { font-size: 13px; font-weight: 800; flex: 1; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.7px;
+    color: var(--dim);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    background: var(--bg);
+  }
+
+  .sec-b {
+    padding: 4px 8px 5px;
+    font-size: 11.5px;
+    line-height: 1.4;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .sec-b ul {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .sec-b li {
+    padding: 3px 6px 3px 14px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .sec-b li:nth-child(even) { background: var(--row); }
+  .sec-b li::before {
+    content: "";
+    position: absolute;
+    left: 3px; top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    background: var(--orange);
+  }
+  .sec-b strong { font-weight: 700; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    min-height: 0;
+  }
+  .grid2 > .sec { min-height: 0; height: 100%; }
+
+  .table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    line-height: 1.28;
+  }
+  .table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.3px;
+    background: var(--ink);
+    color: #fff;
+    padding: 5px 7px;
+    font-weight: 500;
+    height: 28px;
+  }
+  .table th:first-child { color: var(--orange); }
+  .table td {
+    padding: 0 7px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+    height: calc((100% - 28px) / 6);
+  }
+  .table tbody { height: calc(100% - 28px); }
+  .table tr:nth-child(even) td { background: var(--row); }
+  .table tr:last-child td { border-bottom: none; }
+  .col-a { width: 16%; font-weight: 700; white-space: nowrap; }
+  .col-b { width: 42%; }
+  .col-c { width: 42%; color: var(--dim); }
+
+  .table-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+  .table-wrap .table { flex: 1; }
+
+  .contract {
+    background: var(--ink);
+    color: #eee;
+    padding: 0;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    line-height: 1.35;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .contract .row-item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 8px;
+    padding: 0 9px;
+    border-bottom: 1px solid #2a2a2a;
+    flex: 1;
+    align-items: center;
+  }
+  .contract .row-item:last-child { border-bottom: none; }
+  .contract .k { color: var(--orange); font-weight: 700; }
+  .contract .hl { color: var(--orange); font-weight: 700; }
+
+  .mini-flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .step {
+    border: 1px solid var(--ink);
+    padding: 5px 6px;
+    background: var(--bg);
+    font-size: 10.5px;
+    line-height: 1.3;
+  }
+  .step .n {
+    font-family: var(--mono);
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+
+  .exec-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+  }
+  .exec-body > ul {
+    list-style: none;
+    flex: 0 0 auto;
+  }
+  .exec-body > ul li {
+    padding: 3px 6px 3px 14px;
+    position: relative;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .exec-body > ul li:nth-child(even) { background: var(--row); }
+  .exec-body > ul li::before {
+    content: "";
+    position: absolute;
+    left: 3px; top: 8px;
+    width: 5px; height: 5px;
+    background: var(--orange);
+  }
+
+  .when {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3px;
+    flex: 0 0 auto;
+  }
+  .when .box {
+    border: 1px solid var(--line);
+    background: var(--row);
+    padding: 5px 6px;
+    font-size: 10.5px;
+    line-height: 1.3;
+  }
+  .when .box b {
+    display: block;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    color: var(--orange);
+    margin-bottom: 1px;
+    letter-spacing: 0.4px;
+  }
+
+  .chip-map {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--ink);
+    font-size: 12px;
+    line-height: 1.35;
+    flex: 1 1 auto;
+    min-height: 110px;
+  }
+  .chip-map div {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-height: 0;
+  }
+  .chip-map div:nth-child(2n) { border-right: none; }
+  .chip-map div:nth-child(n+3) { border-bottom: none; }
+  .chip-map div:nth-child(odd) { background: var(--row); }
+  .chip-map .k {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--orange);
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+  .chip-map .v { font-weight: 600; }
+
+  .footer {
+    border-top: 2px solid var(--ink);
+    padding: 7px 24px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  .footer .sum {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.32;
+    flex: 1;
+  }
+  .footer .sum span { color: var(--orange); }
+  .brand {
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .brand .en {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    color: var(--dim);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .warn { color: var(--orange); font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="ruler"></div>
+
+  <header class="header">
+    <div class="meta">CHIP · HARD TASK · ACCEPTANCE CONTRACT · MULTI-ROUTE · ADVERSARIAL</div>
+    <h1 class="title"><span class="r2">R2-</span>难任务合同式工作法</h1>
+    <p class="sub">把「请帮我做好 X」改成「按合同交付可验收的 X」——验收钉死 · 伪完成拉黑 · 多路线探索 · 独立找茬</p>
+  </header>
+
+  <div class="anchor">
+    <div class="lab">ANCHOR</div>
+    <div class="txt">难任务不写固定 SOP，而写<em>可验收合同</em>：只钉完成标准 · 定义与边界一次说清 · 写明什么不算答案 · 动态多路线 + <em>生成与审查分离</em></div>
+  </div>
+
+  <main class="main">
+    <div class="grid2">
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">01</div>
+          <h3>不写 SOP，只钉「什么叫做完」</h3>
+          <span class="tag">ACCEPT</span>
+        </div>
+        <div class="sec-b">
+          <ul>
+            <li><strong>机制：</strong>路径未知时步骤常错；认真执行错误路线 → 漂亮废稿</li>
+            <li><strong>RTL：</strong>不写「先仿真再综合」→ F1–Fn 全绿 + 无 X + 违例≤0</li>
+            <li><strong>验证：</strong>交付 = 可复现 pass / 覆盖率阈值 / 断言列表</li>
+            <li><strong>评审：</strong>完成 = 风险清单关闭态，不是「讲过一轮」</li>
+          </ul>
+        </div>
+      </section>
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">02</div>
+          <h3>定义 · 范围 · 边界一次说清</h3>
+          <span class="tag">SCOPE</span>
+        </div>
+        <div class="sec-b">
+          <ul>
+            <li><strong>机制：</strong>多数失败是任务理解漂移，不是推理力不够</li>
+            <li><strong>规格块：</strong>是什么/不是什么；允许 stub？复位语义？</li>
+            <li><strong>禁止假设：</strong>只证特例、只跑 demo 规模、默认连通</li>
+            <li><strong>空情况：</strong>空输入、全 0、无事务；长任务重复钉目标</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">
+        <div class="num">03</div>
+        <h3>白名单 + 黑名单：什么不算答案</h3>
+        <span class="tag">NEGATIVE SPEC</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-a">场景</th>
+              <th class="col-b">完成标准（示例）</th>
+              <th class="col-c">一律不算完成</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-a">RTL / 模块</td>
+              <td class="col-b">失败测试先红再绿；关键断言可杀错实现</td>
+              <td class="col-c">只有 happy path；stub 能骗过断言；无边界用例</td>
+            </tr>
+            <tr>
+              <td class="col-a">验证计划</td>
+              <td class="col-b">覆盖点可映射到 test；退出条件可测</td>
+              <td class="col-c">「测了主要场景」无清单；固定规模跑完即完</td>
+            </tr>
+            <tr>
+              <td class="col-a">疑难 debug</td>
+              <td class="col-b">根因 + 最小复现 + 防回归检查</td>
+              <td class="col-c">现象描述充数；换配置碰运气；无证据链路</td>
+            </tr>
+            <tr>
+              <td class="col-a">设计文档</td>
+              <td class="col-b">接口 / 时序 / 错误处理可据此实现</td>
+              <td class="col-c">分类标签无机制；把未决问题当 routine</td>
+            </tr>
+            <tr>
+              <td class="col-a">形式 / 证明</td>
+              <td class="col-b">结论精确覆盖陈述；边界与反例处理齐全</td>
+              <td class="col-c">只证特殊子类；归约到另一未证命题；循环定义</td>
+            </tr>
+            <tr>
+              <td class="col-a">综合 / 时序</td>
+              <td class="col-b">约束下可实现 + 违例归零或可解释 waiver</td>
+              <td class="col-c">「先看一下」无报告；隐瞒违例；无对应约束源</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid2">
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">04</div>
+          <h3>动态多路线 + 独立对抗审查</h3>
+          <span class="tag">2–6 AGENTS</span>
+        </div>
+        <div class="sec-b">
+          <ul>
+            <li><strong>Portfolio：</strong>3 条互不兼容路线（结构 / 代数·形式 / 反例压力）</li>
+            <li><strong>独立早期：</strong>勿告知「当前最看好」，防集体收敛同错</li>
+            <li><strong>Registry：</strong>按机制思想分组，不按措辞；同族挤堆则分流</li>
+            <li><strong>Blocked：</strong>卡在与原题同难的引理 → 停烧，除非新机制</li>
+            <li><strong>Adversarial：</strong>另会话只拆：偷换定义、漏边界、循环论证</li>
+            <li><strong>回传：</strong>只收引理 / 构造 / 波形 / 反例；拒收「有进展」</li>
+          </ul>
+        </div>
+      </section>
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">05</div>
+          <h3>日常可贴的「工作合同」壳</h3>
+          <span class="tag">TEMPLATE</span>
+        </div>
+        <div class="contract">
+          <div class="row-item"><span class="k">任务</span><span>一句话目标</span></div>
+          <div class="row-item"><span class="k">定义</span><span>关键名词 3–7 个 + 空情况</span></div>
+          <div class="row-item"><span class="k">完成</span><span class="hl">必须同时满足的可跑验收</span></div>
+          <div class="row-item"><span class="k">不算</span><span>伪完成黑名单（特殊子类 / 归约未证 / 固定规模）</span></div>
+          <div class="row-item"><span class="k">探索</span><span>最多 N 条独立路线；blocked 标记；禁 routine 空话</span></div>
+          <div class="row-item"><span class="k">交付</span><span>过 audit 才返回；否则：最强已证 + 精确缺口</span></div>
+          <div class="row-item"><span class="k">审查</span><span class="hl">另开角色只找漏洞，不提新方案</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h">
+        <div class="num">06</div>
+        <h3>本周最小实验 · 何时不必全套 · 芯片日常映射</h3>
+        <span class="tag">EXECUTE</span>
+      </div>
+      <div class="sec-b" style="padding-top:5px;">
+        <div class="exec-body">
+          <div class="mini-flow">
+            <div class="step"><div class="n">STEP 1</div>15 分钟写合同：定义 + 完成 + 不算</div>
+            <div class="step"><div class="n">STEP 2</div>2 个独立会话做方案（互不透露思路）</div>
+            <div class="step"><div class="n">STEP 3</div>第 3 会话只审查，按黑名单打分</div>
+            <div class="step"><div class="n">STEP 4</div>只合并过审部分；blocked 写清差什么机制</div>
+          </div>
+          <ul>
+            <li><strong>成功信号：</strong>审查会话按黑名单杀掉 ≥1 个「看似完整」的假完成</li>
+            <li><span class="warn">一句话：</span>按合同交付可验收 X；伪完成无效；多路线；另人专拆</li>
+          </ul>
+          <div class="when">
+            <div class="box"><b>FULL SET</b>路径未知 · 正确性优先 · 可开对抗会话</div>
+            <div class="box"><b>LIGHT</b>极赶时间 → 至少保留「不算完成」三条</div>
+            <div class="box"><b>SKIP</b>路径已知且验收单一 → 短指令即可</div>
+          </div>
+          <div class="chip-map">
+            <div><span class="k">模块交付</span><span class="v">功能点清单 + 仿真绿 + 边界用例</span></div>
+            <div><span class="k">覆盖收敛</span><span class="v">缺口映射 test，禁「差不多了」</span></div>
+            <div><span class="k">疑难 bug</span><span class="v">3 路线假设并行，独立证伪</span></div>
+            <div><span class="k">设计评审</span><span class="v">风险关闭表 + 审查人只拆不提新案</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="sum">把难任务写成<span>可验收、可审查、可纠错</span>的合同——不规定唯一道路，但把终点、边界、失败条件与审查机制写死。</div>
+    <div class="brand">
+      R2芯片智能体<br />
+      <span class="en">R2 · CHIP · AGENT</span>
+    </div>
+  </footer>
+</body>
+</html>

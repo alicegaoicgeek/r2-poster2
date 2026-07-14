@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:52px 88px 48px;display:flex;flex-direction:column}
+
+  .r2-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+  .r2-badge .sq{width:8px;height:8px;background:var(--accent)}
+  .r2-badge .txt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:0.14em}
+
+  h1{font-size:46px;font-weight:700;line-height:1.1;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px}
+  h1 .brand{color:var(--accent)}
+
+  .subtitle{font-size:24px;font-weight:400;color:var(--text2);line-height:1.45;margin-bottom:10px}
+
+  .rule{width:56px;height:2px;background:var(--accent);margin-bottom:16px}
+
+  .sec-label{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center}
+  .sec-label::before{content:'';display:inline-block;width:4px;height:4px;background:var(--accent);margin-right:6px;flex-shrink:0}
+
+  .ref-table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:0}
+  .ref-table th{font-size:14px;font-weight:500;color:var(--text3);letter-spacing:0.06em;text-align:left;padding:5px 0 8px;border-bottom:2px solid var(--text)}
+  .ref-table td{font-size:20px;line-height:1.4;padding:8px 0;border-bottom:1px solid var(--rule2);color:var(--text2);vertical-align:top;overflow-wrap:break-word;word-break:break-all}
+  .ref-table tr:last-child td{border-bottom:none}
+  .ref-table td:first-child{font-family:var(--mono);font-weight:600;color:var(--text);font-size:20px}
+
+  .col-a{width:15%} .col-b{width:52%} .col-c{width:33%}
+  .col-a2{width:18%} .col-b2{width:82%}
+
+  .note{font-size:22px;line-height:1.5;color:var(--text2);margin-top:auto;padding-top:4px}
+  .note em{font-style:normal;font-weight:600;color:var(--text)}
+
+  .footer{margin-top:8px;display:flex;justify-content:flex-end}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+
+  <div class="r2-badge">
+    <div class="sq"></div>
+    <div class="txt">R2-EDA</div>
+  </div>
+
+  <h1><span class="brand">R2-EDA</span>：让EDA工具从给人用到给 AI 用</h1>
+
+  <div class="subtitle">极大丰富 · 极度垂直 · 极限低成本</div>
+
+  <div class="rule"></div>
+
+  <div class="sec-label">SoC 工具链（SSoT → RTL）</div>
+
+  <table class="ref-table">
+    <thead><tr><th class="col-a">工具</th><th class="col-b">输入 → 输出</th><th class="col-c">定位</th></tr></thead>
+    <tbody>
+      <tr><td>ipgen</td><td>输入：IP 模板+ 用户配置参数；输出：渲染后的可综合 IP 块源文件。</td><td>Pipe/Valve/Translator 三类标准IP模板</td></tr>
+      <tr><td>reggen</td><td>regmap.json → RTL+C Header +UVM RAL+SVA</td><td>寄存器/CSR生成</td></tr>
+      <tr><td>c2rtl</td><td>C/算法 → SV RTL+Verilator</td><td>算法类IP</td></tr>
+      <tr><td>cbbrtl</td><td>CBB库匹配+AI补残差 +FEC等价兜底</td><td>复用 proven CBB 的 RTL</td></tr>
+      <tr><td>topgen</td><td>IP列表+ICD/互联配置 → SoC顶层RTL+地址映射+中断路由</td><td>IP集成进SoC</td></tr>
+      <tr><td>buildsoc</td><td>.core依赖声明 → 依赖解算 +R2.lock+filelist+沙盒编译/仿真 +BOM+变更对比</td><td>IP供应链治理 (像pip install管IP)，CI/CD落地，不生成RTL</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-label">验证（环境/激励/覆盖率）</div>
+
+  <table class="ref-table">
+    <thead><tr><th class="col-a">工具</th><th class="col-b">输入 → 输出</th><th class="col-c">定位</th></tr></thead>
+    <tbody>
+      <tr><td>uvmgen</td><td>yaml → 完整UVM环境 Agent/Monitor/Driver/Seq/Env</td><td>全栈验证环境生成，对标OpenTitan uvmdvgen</td></tr>
+      <tr><td>ralgen</td><td>HJSON/JSON → UVM RAL model +accessors</td><td>寄存器抽象层 (reggen含RAL时可合并)</td></tr>
+      <tr><td>PSSGen</td><td>.pss → UVM/C/SV 具象代码</td><td>PSS +代码生成</td></tr>
+      <tr><td>vipgen</td><td>接口协议spec → VIP(BFM+checker+coverage)</td><td>协议级VIP自动生成</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-label">r2-* 智能体</div>
+
+  <table class="ref-table">
+    <thead><tr><th class="col-a2">工具</th><th class="col-b2">问题 → 效果</th></tr></thead>
+    <tbody>
+      <tr><td>r2-scan</td><td>3000失败日志 grep 4-6h → 30秒</td></tr>
+      <tr><td>r2-trace</td><td>Verdi点10+次 → 1条命令</td></tr>
+      <tr><td>r2-wave</td><td>开GUI拖信号 → 1条命令</td></tr>
+      <tr><td>r2-diff</td><td>通过vs失败手动对比 → 自动定位</td></tr>
+      <tr><td>r2-suspect</td><td>人脑综合判断 → 自动排名</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    一个芯片团队的 AI 落地 = <em>Agent</em> + <em>Skills</em> + <em>Data</em> + <em>EDA</em>
+  </div>
+
+  <div class="footer">
+    <div class="footer-mark">
+      <div class="sq"></div>
+      <div class="txt">R2芯片智能体</div>
+    </div>
+  </div>
+
+</div></body></html>

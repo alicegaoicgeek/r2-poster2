@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2-Workflow 产品架构图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Lora:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+    --canvas-w: 1920px;
+    --canvas-h: 1080px;
+    --paper: #F7F4EF;
+    --letterbox: #e9edf2;
+    --navy: #141414;
+    --navy-soft: #2a2a2a;
+    --accent: #E8501F;
+    --ink: #141414;
+    --ink-2: #4f5a66;
+    --ink-3: #8a94a0;
+    --hair: #ddd8d0;
+    --c-blue:   #2f6fb0;  --f-blue:   #eaf2fb;  --l-blue:   #bcd7f0;
+    --c-green:  #2e9e6b;  --f-green:  #e7f6ee;  --l-green:  #b6e2cb;
+    --c-amber:  #E8501F;  --f-amber:  #fdf0ea;  --l-amber:  #f4c4ad;
+    --c-purple: #7a5cc0;  --f-purple: #f0ebfb;  --l-purple: #d6c9f0;
+    --c-red:    #d24438;  --f-red:    #fbeae8;  --l-red:    #f2c4be;
+    --c-teal:   #1f9b9b;  --f-teal:   #e4f5f5;  --l-teal:   #aee2e2;
+    --ok: #2e9e6b; --no: #d24438;
+    --f-sans: 'Noto Sans SC', system-ui, sans-serif;
+    --f-mono: 'JetBrains Mono', monospace;
+    --f-serif-it: 'Lora', Georgia, serif;
+    --pad: 44px;
+    --gap: 14px;
+    --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--letterbox); }
+.r2-viewport { position: fixed; inset: 0; overflow: auto; display: grid; place-items: center; }
+.r2-stage { position: relative; width: var(--canvas-w); height: var(--canvas-h); transform-origin: center center; flex: none; }
+.r2-poster {
+    width: 100%; height: 100%; background: var(--paper);
+    font-family: var(--f-sans); color: var(--ink);
+    padding: var(--pad); display: flex; flex-direction: column; overflow: hidden; position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+.r2-pagebadge { position: absolute; top: 18px; left: 22px; font-family: var(--f-mono); font-size: 15px; font-weight: 700; color: var(--accent); }
+.r2-byline { position: absolute; top: 18px; right: 24px; font-family: var(--f-mono); font-size: 14px; color: var(--ink-3); }
+.r2-titlebar { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 16px 28px; text-align: center; margin-bottom: 14px; }
+.r2-titlebar h1 { font-size: 40px; font-weight: 900; letter-spacing: 0.02em; line-height: 1.1; }
+.r2-titlebar .en { font-family: var(--f-serif-it); font-style: italic; font-weight: 500; font-size: 18px; opacity: 0.85; margin-top: 2px; }
+.r2-labelrow { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: start; margin-bottom: 8px; }
+.r2-pill { font-weight: 700; font-size: 17px; color: #fff; background: var(--accent); border-radius: 7px; padding: 6px 12px; text-align: center; white-space: nowrap; }
+.r2-pill.blue { background: var(--c-blue); } .r2-pill.green { background: var(--c-green); } .r2-pill.navy { background: var(--navy); }
+.r2-labelrow .body { font-size: 18px; line-height: 1.45; color: var(--ink); padding-top: 2px; }
+.r2-labelrow .body b { color: var(--accent); }
+.r2-main { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; flex: 1; min-height: 0; }
+.r2-left, .r2-right { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.r2-sec { display: flex; align-items: center; gap: 10px; margin: 4px 0 6px; }
+.r2-sec .num { width: 30px; height: 30px; flex: none; border-radius: 8px; background: var(--c-blue); color: #fff; font-weight: 900; font-size: 16px; display: grid; place-items: center; }
+.r2-sec h2 { font-size: 20px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+.r2-sec .rule { flex: 1; height: 2px; background: var(--hair); border-radius: 2px; }
+.r2-sec.green .num { background: var(--c-green); } .r2-sec.green h2 { color: var(--c-green); }
+.r2-sec.amber .num { background: var(--accent); } .r2-sec.amber h2 { color: var(--accent); }
+.r2-sec.purple .num { background: var(--c-purple); } .r2-sec.purple h2 { color: var(--c-purple); }
+.r2-sec.red .num { background: var(--c-red); } .r2-sec.red h2 { color: var(--c-red); }
+.r2-sec.teal .num { background: var(--c-teal); } .r2-sec.teal h2 { color: var(--c-teal); }
+.r2-flow { display: flex; align-items: stretch; gap: 0; }
+.r2-node { flex: 1; background: #fff; border: 1.5px solid var(--l-blue); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.r2-node.accent { border-color: var(--l-amber); background: var(--f-amber); }
+.r2-node.gate { border-color: var(--l-red); background: var(--f-red); }
+.r2-node .tag { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.r2-node h4 { font-size: 16px; font-weight: 700; color: var(--navy); margin: 2px 0; }
+.r2-node .sub { font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+.r2-arrow { flex: none; align-self: center; color: var(--accent); font-size: 22px; padding: 0 4px; font-weight: 700; }
+.r2-grid { display: grid; gap: var(--gap); }
+.r2-g2 { grid-template-columns: 1fr 1fr; } .r2-g3 { grid-template-columns: repeat(3, 1fr); } .r2-g4 { grid-template-columns: repeat(4, 1fr); }
+.r2-card { background: var(--f-blue); border: 1.5px solid var(--l-blue); border-radius: var(--radius); padding: 12px 14px; }
+.r2-card .ch { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.r2-card .ico { font-size: 18px; }
+.r2-card h3 { font-size: 17px; font-weight: 700; color: var(--c-blue); }
+.r2-card p, .r2-card li { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+.r2-card ul { list-style: none; }
+.r2-card li { margin-top: 2px; }
+.r2-card b { color: var(--ink); }
+.r2-card.green  { background: var(--f-green);  border-color: var(--l-green); }  .r2-card.green  h3 { color: var(--c-green); }
+.r2-card.amber  { background: var(--f-amber);  border-color: var(--l-amber); }  .r2-card.amber  h3 { color: var(--accent); }
+.r2-card.purple { background: var(--f-purple); border-color: var(--l-purple); } .r2-card.purple h3 { color: var(--c-purple); }
+.r2-card.red    { background: var(--f-red);    border-color: var(--l-red); }    .r2-card.red    h3 { color: var(--c-red); }
+.r2-card.teal   { background: var(--f-teal);   border-color: var(--l-teal); }   .r2-card.teal   h3 { color: var(--c-teal); }
+.r2-card.plain  { background: #fff; border-color: var(--hair); } .r2-card.plain h3 { color: var(--navy); }
+.r2-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.r2-table th { background: var(--navy); color: #fff; font-weight: 700; padding: 6px 10px; text-align: left; }
+.r2-table td { padding: 5px 10px; border-bottom: 1px solid var(--hair); color: var(--ink-2); vertical-align: top; }
+.r2-table tr:nth-child(even) td { background: rgba(255,255,255,0.6); }
+.r2-table .mono { font-family: var(--f-mono); font-size: 12px; }
+.r2-vs { display: grid; grid-template-columns: 1fr 48px 1fr; align-items: stretch; gap: 0; }
+.r2-vs .side { border-radius: 10px; padding: 12px 14px; border: 1.5px solid; }
+.r2-vs .a { background: var(--f-green); border-color: var(--l-green); }
+.r2-vs .b { background: var(--f-red); border-color: var(--l-red); }
+.r2-vs .side h4 { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+.r2-vs .a h4 { color: var(--c-green); } .r2-vs .b h4 { color: var(--c-red); }
+.r2-vs .side ul { list-style: none; }
+.r2-vs .side li { font-size: 13px; color: var(--ink-2); line-height: 1.4; margin-bottom: 3px; padding-left: 14px; position: relative; }
+.r2-vs .a li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 900; }
+.r2-vs .b li::before { content: "✕"; position: absolute; left: 0; color: var(--no); font-weight: 900; }
+.r2-vs .mid { text-align: center; font-family: var(--f-mono); font-weight: 700; font-size: 16px; color: var(--ink-3); align-self: center; }
+.r2-legend { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; background: #fff; border: 1.5px solid var(--hair); border-radius: 10px; padding: 8px 16px; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+.r2-legend .item { display: flex; align-items: center; gap: 6px; }
+.r2-formula { font-family: var(--f-mono); font-size: 13px; background: var(--navy); color: #fff; border-radius: 8px; padding: 8px 14px; text-align: center; line-height: 1.5; }
+.r2-formula em { color: var(--accent); font-style: normal; font-weight: 700; }
+.r2-branch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.r2-branch .r2-card { min-height: 108px; }
+.r2-exportbar { position: fixed; top: 14px; right: 16px; z-index: 9999; display: flex; gap: 8px; font-family: var(--f-sans); }
+.r2-exportbar button { background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 14px; font-weight: 700; cursor: pointer; }
+.r2-exportbar button:hover { background: var(--navy-soft); }
+@media print { .r2-exportbar { display: none; } html, body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="r2-exportbar"><button onclick="exportPNG()">导出 PNG (2x)</button></div>
+<div class="r2-viewport">
+  <div class="r2-stage" id="stage">
+    <div class="r2-poster" id="poster">
+      <span class="r2-pagebadge">R2 · Workflow</span>
+      <span class="r2-byline">决策者架构一页 · 2026</span>
+
+      <div class="r2-titlebar">
+        <h1>R2-Workflow 产品架构图</h1>
+        <div class="en">Evidence-gated Agent execution — claim completion only with proof</div>
+      </div>
+
+      <div class="r2-labelrow">
+        <span class="r2-pill">定位</span>
+        <span class="body"><b>消极验证框架</b>：不承诺 AI 一定做对，只保证<b>证据不足时不允许声称完成</b>。约束 Agent 行为顺序与状态机，不修改模型。</span>
+      </div>
+      <div class="r2-labelrow">
+        <span class="r2-pill navy">价值</span>
+        <span class="body">把「我完成了」变成<b>可验证命题</b>——与 TDD / Code Review / CI 同构：<em>不合格声明 → 机器拦截</em>。</span>
+      </div>
+
+      <div class="r2-main">
+        <div class="r2-left">
+          <div class="r2-sec blue"><span class="num">1</span><h2>端到端主链路</h2><span class="rule"></span></div>
+          <div class="r2-flow">
+            <div class="r2-node"><div class="tag">IN</div><h4>用户请求</h4><div class="sub">需求 / Bug / 审查</div></div>
+            <span class="r2-arrow">→</span>
+            <div class="r2-node accent"><div class="tag">ROUTE</div><h4>任务分类器</h4><div class="sub">5 种模式路由</div></div>
+            <span class="r2-arrow">→</span>
+            <div class="r2-node"><div class="tag">RUN</div><h4>状态机执行</h4><div class="sub">先检查·再行动·留证据</div></div>
+            <span class="r2-arrow">→</span>
+            <div class="r2-node gate"><div class="tag">GATE</div><h4>验证门</h4><div class="sub">四条件全满足</div></div>
+            <span class="r2-arrow">→</span>
+            <div class="r2-node"><div class="tag">OUT</div><h4>完成报告</h4><div class="sub">仅陈述可验证事实</div></div>
+          </div>
+
+          <div class="r2-formula" style="margin-top:8px;">
+            完成 ⟺ <em>分类正确</em> ∧ <em>每步有证据</em> ∧ <em>验证已执行</em> ∧ <em>发现已关闭</em>
+            &nbsp;|&nbsp; 逆否：缺任一条件 → <em>禁止声称完成</em>
+          </div>
+
+          <div class="r2-sec amber"><span class="num">2</span><h2>三条主流程（状态机）</h2><span class="rule"></span></div>
+          <div class="r2-branch">
+            <div class="r2-card blue">
+              <div class="ch"><span class="ico">🎯</span><h3>目标驱动</h3></div>
+              <ul>
+                <li>拆 <b>goals</b> → 逐目标执行</li>
+                <li>Gn 有证据 → 才开 Gn+1</li>
+                <li>多步骤实现任务</li>
+              </ul>
+            </div>
+            <div class="r2-card amber">
+              <div class="ch"><span class="ico">🔧</span><h3>调试诊断</h3></div>
+              <ul>
+                <li>复现 → 多假设并行</li>
+                <li>证伪测试 → 验证修复</li>
+                <li>报错 / 异常场景</li>
+              </ul>
+            </div>
+            <div class="r2-card purple">
+              <div class="ch"><span class="ico">🔍</span><h3>审查驱动</h3></div>
+              <ul>
+                <li>记录 <b>findings</b></li>
+                <li>逐项解决 → Gate 检查</li>
+                <li>代码审查 / 质量巡检</li>
+              </ul>
+            </div>
+          </div>
+          <div class="r2-grid r2-g2" style="margin-top:6px;">
+            <div class="r2-card plain"><div class="ch"><span class="ico">⚡</span><h3>快速模式</h3></div><p>单步可瞬间完成 → 执行 + 单次验证，简化 Gate</p></div>
+            <div class="r2-card plain"><div class="ch"><span class="ico">💬</span><h3>轻量模式</h3></div><p>纯问答 / 咨询 → 跳过重型流程，保留审计边界</p></div>
+          </div>
+
+          <div class="r2-sec teal"><span class="num">3</span><h2>持久化状态层（文件驱动 · 可恢复）</h2><span class="rule"></span></div>
+          <div class="r2-grid r2-g4">
+            <div class="r2-card teal"><div class="ch"><span class="ico">📋</span><h3>目标账本</h3></div><p class="mono">goals.json</p><p>多步分解·依赖·完成态·证据绑定</p></div>
+            <div class="r2-card teal"><div class="ch"><span class="ico">📝</span><h3>发现清单</h3></div><p class="mono">findings.json</p><p>审查项 open/resolved·阻塞完成</p></div>
+            <div class="r2-card teal"><div class="ch"><span class="ico">📎</span><h3>证据日志</h3></div><p class="mono">ledger.jsonl</p><p>命令·输出·时间戳·追加写</p></div>
+            <div class="r2-card teal"><div class="ch"><span class="ico">⚙️</span><h3>编排入口</h3></div><p class="mono">SKILL.md</p><p>工作流编排·能力边界声明</p></div>
+          </div>
+        </div>
+
+        <div class="r2-right">
+          <div class="r2-sec red"><span class="num">4</span><h2>验证门（Gate）— 核心产品承诺</h2><span class="rule"></span></div>
+          <table class="r2-table">
+            <tr><th>检查项</th><th>拦截条件</th></tr>
+            <tr><td><b>任务分类</b></td><td>模式与场景不匹配 → BLOCK</td></tr>
+            <tr><td><b>逐步证据</b></td><td>goal 缺 ledger 记录 → BLOCK</td></tr>
+            <tr><td><b>自动验证</b></td><td>test / lint / typecheck 未跑 → BLOCK</td></tr>
+            <tr><td><b>发现关闭</b></td><td>findings 存在 open → BLOCK</td></tr>
+          </table>
+          <div class="r2-card red" style="margin-top:8px;">
+            <div class="ch"><span class="ico">🛡️</span><h3>失败时输出</h3></div>
+            <p>不声称完成，只报告：<b>改了什么 · 验证了什么 · 剩余风险</b></p>
+          </div>
+
+          <div class="r2-sec green"><span class="num">5</span><h2>产品边界（拍板口径）</h2><span class="rule"></span></div>
+          <div class="r2-vs">
+            <div class="side a">
+              <h4>我们交付</h4>
+              <ul>
+                <li>文件驱动状态机，会话中断可恢复</li>
+                <li>纯函数 Gate，机器可判 pass/block</li>
+                <li>跨平台移植（Skill / Rules / 自定义 Agent）</li>
+                <li>与 R2-AIOS Harness 编排层咬合</li>
+              </ul>
+            </div>
+            <div class="mid">VS</div>
+            <div class="side b">
+              <h4>我们不承诺</h4>
+              <ul>
+                <li>不修改模型权重或能力上限</li>
+                <li>不保证「零幻觉」「一定做对」</li>
+                <li>不靠口号灌输纪律，靠结构展示</li>
+                <li>验证命令需按项目适配</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="r2-sec purple"><span class="num">6</span><h2>平台移植 & 工程同构</h2><span class="rule"></span></div>
+          <table class="r2-table">
+            <tr><th>层级</th><th>可移植（不变）</th><th>需适配</th></tr>
+            <tr><td>状态机逻辑</td><td>goals / findings / ledger 结构</td><td>—</td></tr>
+            <tr><td>编排载体</td><td>Gate 布尔逻辑</td><td>Skill · cursorrules · 系统提示</td></tr>
+            <tr><td>验证命令</td><td>拦截语义</td><td>test · lint · typecheck 具体命令</td></tr>
+          </table>
+          <div class="r2-grid r2-g3" style="margin-top:8px;">
+            <div class="r2-card green"><div class="ch"><h3>TDD</h3></div><p>测试失败<br>→ 阻止提交</p></div>
+            <div class="r2-card green"><div class="ch"><h3>Code Review</h3></div><p>未解决评论<br>→ 阻止合并</p></div>
+            <div class="r2-card green"><div class="ch"><h3>R2-Workflow</h3></div><p>缺证据<br>→ 不声称完成</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="r2-legend">
+        <span class="item"><b>验收五则</b></span>
+        <span class="item">① 三类账本可读写、可恢复</span>
+        <span class="item">② 五模式路由正确、有日志</span>
+        <span class="item">③ Gate 缺证据时拦截</span>
+        <span class="item">④ 报告仅含可验证陈述</span>
+        <span class="item">⑤ 边界声明写入编排入口</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function fitStage() {
+    const stage = document.getElementById('stage');
+    const w = stage.offsetWidth, h = stage.offsetHeight, pad = 24;
+    const f = Math.min((window.innerWidth - pad) / w, (window.innerHeight - pad) / h, 1);
+    stage.style.transform = `scale(${f})`;
+}
+window.addEventListener('resize', fitStage);
+window.addEventListener('load', fitStage);
+fitStage();
+function exportPNG() {
+    const node = document.getElementById('poster');
+    if (typeof html2canvas === 'undefined') { alert('html2canvas 未加载'); return; }
+    html2canvas(node, { scale: 2, backgroundColor: '#F7F4EF', useCORS: true, logging: false })
+        .then(canvas => {
+            const a = document.createElement('a');
+            a.download = 'R2-Workflow-产品架构图.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+        });
+}
+</script>
+</body>
+</html>

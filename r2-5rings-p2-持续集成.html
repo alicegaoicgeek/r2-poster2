@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1440px;overflow:hidden}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:56px 96px 48px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .poster>*{flex-shrink:0;min-height:0}
+
+  /* === Geometry: two circles === */
+  .geo-outer{position:absolute;right:80px;top:360px;width:300px;height:300px;border-radius:50%;border:2px solid var(--rule);z-index:0;pointer-events:none}
+  .geo-inner{position:absolute;right:130px;top:410px;width:200px;height:200px;border-radius:50%;border:2px solid var(--accent);z-index:0;pointer-events:none}
+
+  .r2-label{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.12em;margin-bottom:56px;position:relative;z-index:1}
+
+  .hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:32px;position:relative;z-index:1}
+  .ring-num{font-family:var(--mono);font-size:240px;font-weight:800;color:var(--accent);line-height:0.82;letter-spacing:-0.04em}
+  .ring-name{font-size:48px;font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-0.02em;padding-bottom:12px}
+
+  .rule-orange{width:80px;height:4px;background:var(--accent);margin-bottom:48px;position:relative;z-index:1}
+
+  .explain{font-size:28px;font-weight:400;color:var(--text2);line-height:1.6;max-width:880px;margin-bottom:10px;position:relative;z-index:1}
+
+  .section-label{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.08em;margin-bottom:24px;position:relative;z-index:1}
+
+  /* === Cat-row tool list === */
+  .cat-list{position:relative;z-index:1}
+  .cat-row{display:flex;align-items:flex-start;border-top:1px solid var(--rule2);padding:16px 0}
+  .cat-row:first-of-type{border-top:2px solid var(--text)}
+  .cat-row:last-of-type{border-bottom:2px solid var(--text)}
+  .cat-idx{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);min-width:52px;line-height:1.35;text-align:right;padding-right:4px}
+  .cat-body{display:flex;flex-direction:column;min-width:0}
+  .cat-name{font-size:28px;font-weight:600;color:var(--text);line-height:1.3}
+  .cat-desc{font-size:24px;font-weight:400;color:var(--text2);line-height:1.4;max-height:34px;overflow:hidden;overflow-wrap:break-word}
+
+  .footer{margin-top:auto;display:flex;justify-content:flex-end;align-items:flex-end;position:relative;z-index:1}
+  .footer-page{font-size:20px;font-weight:500;color:var(--text3);font-family:var(--mono)}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:8px;height:8px;background:var(--accent)}
+  .footer-mark .txt{font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+  <div class="geo-outer"></div>
+  <div class="geo-inner"></div>
+  <div class="r2-label">R2-5环 · 2/5</div>
+  <div class="hero">
+    <div class="ring-num">02</div>
+    <div class="ring-name title-main">持续集成<br>IP集成进SoC的6种方式</div>
+  </div>
+  <div class="rule-orange"></div>
+  <div class="explain">六条产线覆盖 IP 从选型到集成的全链路，</div>
+  <div class="explain" style="margin-bottom:36px">每一步决策都有机器可验证的确定性</div>
+  <div class="section-label">六条产线</div>
+  <div class="cat-list">
+    <div class="cat-row">
+      <div class="cat-idx">01</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-reggen</div>
+        <div class="cat-desc">CSR 全链路一致，消灭规格漂移</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">02</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-c2rtl</div>
+        <div class="cat-desc">算法类 IP 分钟级架构迭代与 PPA 摸底</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">03</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-cbbrtl</div>
+        <div class="cat-desc">在流片 proven 模块上生成「敢用」的 RTL</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">04</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-topgen</div>
+        <div class="cat-desc">像编译软件一样把多 IP 集成为一颗 SoC</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">05</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-buildsoc</div>
+        <div class="cat-desc">像 pip 一样管理 IP 供应链与 CI/CD</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <div class="cat-idx">06</div>
+      <div class="cat-body">
+        <div class="cat-name">r2-ipqa</div>
+        <div class="cat-desc">让选错 IP 的成本在 tapeout 之前被看见</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-mark"><div class="sq"></div><div class="txt">R2芯片智能体</div></div>
+  </div>
+</div></body></html>

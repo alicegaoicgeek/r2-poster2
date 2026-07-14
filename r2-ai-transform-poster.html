@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:52px 88px 48px;display:flex;flex-direction:column}
+  .poster>*{flex-shrink:0;min-height:0}
+
+  .r2-label{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.12em;margin-bottom:20px}
+
+  .title-main{font-size:52px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:12px}
+
+  .insight{font-size:24px;font-weight:400;color:var(--text2);line-height:1.45;margin-bottom:32px;max-height:70px;overflow:hidden}
+
+  .rule{height:2px;background:var(--accent);margin-bottom:36px;width:72px}
+
+  .sec-label{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text3);letter-spacing:0.08em;margin-bottom:18px}
+
+  .chain-block{margin-bottom:24px}
+  .chain-label{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px}
+  .chain-old{font-size:24px;font-weight:400;color:var(--text2);line-height:1.45}
+  .chain-new{font-size:24px;font-weight:400;color:var(--text);line-height:1.45}
+  .chain-new .arr{color:var(--accent);font-weight:500}
+
+  .cat-row{padding:12px 0;border-top:1px solid var(--rule2);display:flex;align-items:flex-start;gap:14px}
+  .cat-row:first-child{border-top:2px solid var(--text)}
+  .cat-row:last-child{border-bottom:2px solid var(--text)}
+  .cat-idx{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--accent);min-width:32px;line-height:1.35;padding-top:3px}
+  .tx-body{flex:1;min-width:0}
+  .tx-main{font-size:24px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:4px}
+  .tx-detail{font-size:24px;font-weight:400;color:var(--text2);line-height:1.4;max-height:72px;overflow:hidden;overflow-wrap:break-word}
+  .tx-arr{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--accent);line-height:1.35;padding-top:3px;flex-shrink:0}
+
+  .cat-grid{display:none}
+  .ref-table{display:none}
+
+  .judgment{font-size:24px;font-weight:500;color:var(--text);line-height:1.45;margin-top:20px;padding-top:24px;border-top:1px solid var(--rule)}
+
+  .footer{margin-top:auto;display:flex;justify-content:flex-end;padding-top:8px}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+
+<div class="r2-label">R2-ARCH</div>
+
+<div class="title-main">R2-AI 转型重点</div>
+
+<div class="insight">从"手工集成交付"转向"接口风险燃尽系统"</div>
+
+<div class="rule"></div>
+
+<div class="sec-label">流程对比</div>
+
+<div class="chain-block">
+  <div class="chain-label">手工集成</div>
+  <div class="chain-old">IP 选型 → 接口契约 → 四线开发 → SoC 集成 → 闭环交付</div>
+</div>
+
+<div class="chain-block">
+  <div class="chain-label">R2-AI</div>
+  <div class="chain-new">设计数据 <span class="arr">→</span> 路径选型 <span class="arr">→</span> 边界划分 <span class="arr">→</span> 机器可读 ICD <span class="arr">→</span> 反馈碰撞 <span class="arr">→</span> 四维验收 <span class="arr">→</span> 自动生成 <span class="arr">→</span> Frozen ICD</div>
+</div>
+
+<div class="sec-label" style="margin-top:8px">五个关键转变</div>
+
+<div class="cat-grid"></div>
+
+<div class="cat-row">
+  <div class="cat-idx">01</div>
+  <div class="tx-body">
+    <div class="tx-main">以阶段推进</div>
+    <div class="tx-detail">选型 → 接口 → RTL → 验证 → 软件 → FPGA</div>
+  </div>
+  <div class="tx-arr">→</div>
+  <div class="tx-body">
+    <div class="tx-main">以接口风险推进</div>
+    <div class="tx-detail">每个边界是否可收敛、可验证、可冻结</div>
+  </div>
+</div>
+
+<div class="cat-row">
+  <div class="cat-idx">02</div>
+  <div class="tx-body">
+    <div class="tx-main">冻结 spec 文档</div>
+    <div class="tx-detail">大家同意这版接口规格</div>
+  </div>
+  <div class="tx-arr">→</div>
+  <div class="tx-body">
+    <div class="tx-main">冻结证据包</div>
+    <div class="tx-detail">契约 + 生成物 + 检查结果 + 回归记录</div>
+  </div>
+</div>
+
+<div class="cat-row">
+  <div class="cat-idx">03</div>
+  <div class="tx-body">
+    <div class="tx-main">变更靠人通知、会议同步</div>
+    <div class="tx-detail">接口改动靠人工广播</div>
+  </div>
+  <div class="tx-arr">→</div>
+  <div class="tx-body">
+    <div class="tx-main">AI 计算影响面</div>
+    <div class="tx-detail">谁受影响、重跑什么、是否允许合入</div>
+  </div>
+</div>
+
+<div class="cat-row">
+  <div class="cat-idx">04</div>
+  <div class="tx-body">
+    <div class="tx-main">评审完整文档 / 完整 RTL</div>
+    <div class="tx-detail">大文档人工 review</div>
+  </div>
+  <div class="tx-arr">→</div>
+  <div class="tx-body">
+    <div class="tx-main">评审 delta</div>
+    <div class="tx-detail">只看变化、风险等级、验证证据</div>
+  </div>
+</div>
+
+<div class="cat-row">
+  <div class="cat-idx">05</div>
+  <div class="tx-body">
+    <div class="tx-main">指标看进度、覆盖率、bug 数</div>
+    <div class="tx-detail">关注完成了多少</div>
+  </div>
+  <div class="tx-arr">→</div>
+  <div class="tx-body">
+    <div class="tx-main">指标看风险燃尽率</div>
+    <div class="tx-detail">一次过门率、变更闭环时间、逃逸接口缺陷</div>
+  </div>
+</div>
+
+<div class="ref-table"></div>
+
+<div class="judgment">手工集成管理任务进度；R2-AI 管理接口风险收敛。</div>
+
+<div class="footer">
+  <div class="footer-mark">
+    <div class="sq"></div>
+    <div class="txt">R2芯片智能体</div>
+  </div>
+</div>
+
+</div></body></html>

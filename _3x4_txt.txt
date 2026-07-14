@@ -1,0 +1,55 @@
+R2-可执行文档   r2-specx 一一 机器可消费的 Spec，消灭“三种理解
+
+【病根】                                  °       Bal --       By        |
+Aik Spec -四个角色认知偏差 > Bug Ama LO 架构师说 4|   >| & aims | Q wizac
+<一 同一段话，三种心智模型
+
+- (RBA) Spec > 共识 > ARP ----------------------------------------------------
+
+加       SpecPDF | 2 2 2 ¢-----
+(一份文档)
+
+pdf2md       1 © = 18       ;            .        |
+
+eral    {= WAR (Feature Points) | QB 四 地址空间(Addes Map) |
+
+|                    本                                                                          |
+
+RM Markdown             | © Gey SABHA Reon) | @ SERNA Cong) |
+一一一          specx       1           ;                      |
+|          Cun a, © JL 856 (Timing)       © & 9 (consis |
+
+|                                    1
+
+一信           | © 全 FSM/人而机       © % HBF oopenerci) |
+
+结构化 SSoT (单一信源)             |
+
+              | 一12关元信息| | © OF nierup     @ BAER Glossay) |
+|B regmapjson    eT ae
+|               |             |     1                    eT     a |
+|B) vplanjson      | FSM/中断.) | | © © 全人/上电 Resetpoen | @ @ 追漳信息 (aceabiiy) |
+4                           !                                    |
+
+we 人审 10 DH (RRR, EFS)
+© Guardrail: 未过 Linter FINE
+
+三种投影. 零偏差共识                【三条铁律】
+22 共识 * 开会对齐                 E口   RTL 投影                @ LLMR Parse/Draft,
+(硬件实现)                         不Build
+图  共识 = 结构保证                     设计师视角
+(同源数据 > 不可能不一致| 一|                                          >|        改 SSoT 即改一切，
+-                   a) A               bd  A Lwm BA
+(7% Spec > Ame >                  (REA)                  bis
+ FHS                            HARRA
+_      © 每个产物必须可追湖
+@ Aki“ aR’,                          DOM 投影
+@O 只做“审查”    (验证配置)                        LJeraL bat)
+验证师视角
+6 条同源产线输出
+外 r2-tdd    il r2-cov    [ r2-qemu r2-dom    B reggen    aa topgen
+[ERLE ERE     (覆盖率模型)     (QOM/仿真模型) | | (验证环境配置)     (寄存器生成)      (顶层生成)
+
+[Q 追溯保证: 所有结构化条目与生成产物均携带原文页码 (page_id)，
+一键回溯到 Spec PDF。
+

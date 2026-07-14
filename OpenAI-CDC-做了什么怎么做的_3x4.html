@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>OpenAI CDC：做了什么 · 怎么做的</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #141414;
+    --orange: #E8501F;
+    --row: #F0ECDF;
+    --row2: #E8E3D6;
+    --line: #C9C4BC;
+    --dim: #5a5a5a;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Noto Sans SC', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1080px; height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: grid;
+    grid-template-rows: 6px auto auto 1fr auto;
+  }
+  .ruler {
+    background: #141414;
+    background-image: linear-gradient(90deg, #E8501F 0 72px, #141414 72px);
+  }
+  .header {
+    padding: 12px 24px 9px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .title {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.3px;
+  }
+  .title em {
+    color: var(--orange);
+    font-style: normal;
+  }
+  .sub {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--dim);
+    line-height: 1.35;
+  }
+  .anchor {
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 24px;
+  }
+  .anchor .lab {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--orange);
+    margin-bottom: 2px;
+  }
+  .anchor .txt {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.38;
+  }
+  .anchor em { color: var(--orange); font-style: normal; }
+
+  .main {
+    padding: 8px 24px 6px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1.2fr) minmax(0, 0.95fr);
+    gap: 6px;
+    min-height: 0;
+  }
+  .sec {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--bg);
+  }
+  .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--row2);
+    border-bottom: 1px solid var(--ink);
+    flex-shrink: 0;
+  }
+  .num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--orange);
+    min-width: 22px;
+  }
+  .sec-h h3 { font-size: 13px; font-weight: 800; flex: 1; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.7px;
+    color: var(--dim);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    background: var(--bg);
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    line-height: 1.28;
+  }
+  .table th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    background: var(--ink);
+    color: #fff;
+    padding: 4px 7px;
+    font-weight: 500;
+  }
+  .table th:first-child { color: var(--orange); }
+  .table td {
+    padding: 4px 7px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .table tr:nth-child(even) td { background: var(--row); }
+  .table tr:last-child td { border-bottom: none; }
+  .col-k { width: 18%; font-weight: 700; white-space: nowrap; }
+  .col-v { width: 82%; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    min-height: 0;
+  }
+  .grid2 > .sec { height: 100%; min-height: 0; }
+
+  .sec-b {
+    padding: 5px 8px 6px;
+    font-size: 11.5px;
+    line-height: 1.38;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .sec-b ul {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .sec-b li {
+    padding: 3px 6px 3px 14px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .sec-b li:nth-child(even) { background: var(--row); }
+  .sec-b li::before {
+    content: "";
+    position: absolute;
+    left: 3px; top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    background: var(--orange);
+  }
+  strong { font-weight: 700; }
+  .warn { color: var(--orange); font-weight: 700; }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    flex: 0 0 auto;
+  }
+  .flow .box {
+    border: 1px solid var(--ink);
+    background: var(--bg);
+    padding: 6px 6px 7px;
+    font-size: 10.5px;
+    line-height: 1.28;
+  }
+  .flow .box .n {
+    font-family: var(--mono);
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 9px;
+    margin-bottom: 2px;
+  }
+  .flow .box strong { display: block; margin-bottom: 2px; font-size: 12px; }
+
+  .math-list {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 4px;
+    border-top: 1px solid var(--line);
+  }
+  .math-list li {
+    padding: 5px 6px 5px 8px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    line-height: 1.32;
+    border-bottom: 1px solid var(--line);
+  }
+  .math-list li:last-child { border-bottom: none; }
+  .math-list li:nth-child(even) { background: var(--row); }
+  .math-list .k {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--orange);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    min-width: 68px;
+  }
+
+  .roles {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 0.9fr;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+  }
+  .roles .col {
+    border-right: 1px solid var(--ink);
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .roles .col:last-child { border-right: none; }
+  .roles .col:nth-child(even) { background: var(--row); }
+  .roles .who {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--orange);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+    flex-shrink: 0;
+  }
+  .roles ul {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    line-height: 1.32;
+  }
+  .roles li {
+    padding: 3px 0 3px 10px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .roles li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 4px; height: 4px;
+    background: var(--orange);
+  }
+
+  .diff {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex: 1;
+  }
+  .diff .side {
+    padding: 0;
+    border-right: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .diff .side:last-child { border-right: none; }
+  .diff .side-h {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 500;
+  }
+  .diff .side-h.this { color: var(--orange); }
+  .diff ul {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+  }
+  .diff li {
+    padding: 4px 8px 4px 16px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.3;
+  }
+  .diff li:last-child { border-bottom: none; }
+  .diff li:nth-child(even) { background: var(--row); }
+  .diff li::before {
+    content: "";
+    position: absolute;
+    left: 6px; top: 50%;
+    transform: translateY(-50%);
+    width: 4px; height: 4px;
+    background: var(--orange);
+  }
+
+  .footer {
+    border-top: 2px solid var(--ink);
+    padding: 7px 24px 9px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  .footer .sum {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.32;
+    flex: 1;
+  }
+  .footer .sum span { color: var(--orange); }
+  .footer .src {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--dim);
+    text-align: right;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="ruler"></div>
+
+  <header class="header">
+    <div class="meta">OPENAI · GPT-5.6 SOL ULTRA · CYCLE DOUBLE COVER · 64 SUBAGENTS</div>
+    <h1 class="title">OpenAI CDC：<em>做了什么</em> · <em>怎么做的</em></h1>
+    <p class="sub">圈双覆盖猜想 · 公开 Sol Ultra · 合同式 prompt + 动态多 agent · 流标号 → 集合标号 → 线性代数</p>
+  </header>
+
+  <div class="anchor">
+    <div class="lab">ANCHOR</div>
+    <div class="txt">人定<em>终点与失败条件</em>；模型在约束下<em>并行搜证明</em>；另一批角色<em>专门拆</em>——最终收敛到「8-flow → 二元集标号 → 对偶线性代数」</div>
+  </div>
+
+  <main class="main">
+    <!-- 01 结果 -->
+    <section class="sec">
+      <div class="sec-h">
+        <div class="num">01</div>
+        <h3>结果层：他们具体做了什么</h3>
+        <span class="tag">WHAT</span>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-k">项</th>
+            <th class="col-v">内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-k">模型</td>
+            <td class="col-v">公开可用 GPT-5.6 Sol Ultra（非内部特供；对比 Erdős 单位距离问题那次）</td>
+          </tr>
+          <tr>
+            <td class="col-k">任务</td>
+            <td class="col-v">完全证明 Cycle Double Cover：无桥无环多重图 → 每边恰被两个圈覆盖</td>
+          </tr>
+          <tr>
+            <td class="col-k">组织</td>
+            <td class="col-v">Multiagent v2 · 最多 64 并发子 agent · 动态调配（非固定「N 个做策略 X」）</td>
+          </tr>
+          <tr>
+            <td class="col-k">时间 / 产出</td>
+            <td class="col-v">墙钟约 &lt;1 小时 · 约 3 页 proof PDF + 完整 prompt · 写稿用 Codex（Sol）</td>
+          </tr>
+          <tr>
+            <td class="col-k">边界</td>
+            <td class="col-v">OpenAI 对外宣布的产出；数学共同体是否接受 → 待独立核验，非已定论定理</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 02 03 过程 + 数学 -->
+    <div class="grid2">
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">02</div>
+          <h3>过程层：合同式 prompt 怎么管 64 agent</h3>
+          <span class="tag">HOW · PROCESS</span>
+        </div>
+        <div class="sec-b">
+          <ul>
+            <li><strong>钉死完成：</strong>定义图/桥/圈/CDC；禁止立方、平面等额外假设</li>
+            <li><strong>黑名单：</strong>特殊图类、非恰好 2、归约未证、固定规模、假反例 → 不算</li>
+            <li><strong>多样 portfolio：</strong>代数 / 结构 / 流 / 嵌入 / 极值 / 计算自检</li>
+            <li><strong>早期独立：</strong>不把「当前最看好」告知多数 agent</li>
+            <li><strong>Registry：</strong>按数学思想分组；同族挤堆则分流</li>
+            <li><strong>Blocked：</strong>卡在与原题同强引理 → 停烧，除非新机制</li>
+            <li><strong>Adversarial：</strong>恰好两次、假圈、割点、循环用 CDC 本身</li>
+            <li><strong>回传：</strong>只收引理/构造/方程/反例；拒收「有进展」</li>
+          </ul>
+        </div>
+      </section>
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">03</div>
+          <h3>数学层：最终证明走哪条路</h3>
+          <span class="tag">HOW · MATH</span>
+        </div>
+        <div class="sec-b">
+          <div class="flow">
+            <div class="box"><div class="n">①</div><strong>归约</strong>压到无环立方多重图</div>
+            <div class="box"><div class="n">②</div><strong>Γ-流</strong>nowhere-zero F₂³（8-flow）</div>
+            <div class="box"><div class="n">③</div><strong>局部</strong>每边二元子集 Pe⊆Γ</div>
+            <div class="box"><div class="n">④</div><strong>全局</strong>线性方程对齐两端</div>
+            <div class="box"><div class="n">⑤</div><strong>CDC</strong>同标签成圈·每边两标签</div>
+          </div>
+          <ul class="math-list">
+            <li><span class="k">LEMMA 2.1</span><span>顶点旁任一 s 出现 0/2 次 → Ms 圈分解；|Pe|=2 → 恰好双覆盖</span></li>
+            <li><span class="k">一致性</span><span>两端 Pe 相同 ⇔ 解 t_v、ε_e：t_u + t_v + ε_e·f(e) = d_e</span></li>
+            <li><span class="k">LEMMA 2.2</span><span>对偶：d∈im L；非零 η 两端各计一次 → 特征 2 下和为 0</span></li>
+            <li><span class="k">关键直觉</span><span>不直接找圈，而让圈从边标号里「长出来」</span></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- 04 05 分工 + 对比 -->
+    <div class="grid2">
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">04</div>
+          <h3>人 vs 模型：分工</h3>
+          <span class="tag">ROLES</span>
+        </div>
+        <div class="roles">
+          <div class="col">
+            <div class="who">人类</div>
+            <ul>
+              <li>选题 CDC</li>
+              <li>写合同 prompt</li>
+              <li>开 Ultra · 64 agent</li>
+              <li>公开 prompt + proof</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="who">SOL ULTRA</div>
+            <ul>
+              <li>多路线探索</li>
+              <li>收敛到流→集合标号</li>
+              <li>对抗挑错</li>
+              <li>产出证明骨架</li>
+            </ul>
+          </div>
+          <div class="col">
+            <div class="who">CODEX</div>
+            <ul>
+              <li>整理 3 页 note</li>
+              <li>排版与引用</li>
+              <li>含 AI use 声明</li>
+              <li>对外可阅读版</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="sec">
+        <div class="sec-h">
+          <div class="num">05</div>
+          <h3>和「随便让 AI 证题」差在哪</h3>
+          <span class="tag">DIFF</span>
+        </div>
+        <div class="diff">
+          <div class="side">
+            <div class="side-h">常见做法</div>
+            <ul>
+              <li>固定 SOP：分析→尝试→总结</li>
+              <li>只说「请给出完整证明」</li>
+              <li>单模型自说自话</li>
+              <li>墙钟串行磨一天</li>
+              <li>可能交归约 / 特例充数</li>
+            </ul>
+          </div>
+          <div class="side">
+            <div class="side-h this">这次</div>
+            <ul>
+              <li>不规定解法，只钉验收</li>
+              <li>同时写清什么不算</li>
+              <li>多路线 + 独立对抗</li>
+              <li>并行 64，墙钟 ~1h</li>
+              <li>黑名单直接否决伪完成</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="sum">数学做成：<span>流 → 集合标号 → 对偶线性代数</span> · 工程做成：<span>可验收合同 + 可纠错并行</span> · 公开轨迹未全放出，过程只能还原到规则 + 最终路径</div>
+    <div class="src">cdc_prompt.pdf<br />cdc_proof.pdf · OpenAI</div>
+  </footer>
+</body>
+</html>

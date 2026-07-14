@@ -1,0 +1,62 @@
+| R2-可执行文档|  _r2- “Specx
+
+— 机器可消费的 Spec，消灭"三种理解“
+
+| [病根】  人读 Spec -四个角色认知偏差 > Bug 从源头流出
+
+【流程图】Spec -共识 > 同源产物
+
+Spec PDF
+(一份文档)         pdtamd
+(结构化文本 + 页码追溯)
+Markdown
+specx
+
+(LLM = 翻译官，非建筑师)
+结构化 SSoT (单一信源)
+
+{ © feature_points.json |  <— 12 类元信息
+| B regmapjson    | (寄存器/时序/
+i        j          |    FSM/中断.…)
+
+了
+
+(Q examin) --> |  witmse | --> | Q 验证测c |
+< 同一自话，三种心和模型
+
+12 类元信息 (示例)
+
+|    【本质】
+
+|     oo           '
+@ 2= 功能点(Feature Points)    @ 中 地址空间 (Address Map) |    =     夫 开会对齐
+© Eel 寄存器映射 (Regmap)     © 32 RAR (Config)     i)  共识 = 结构保证
+© 5. HF Crining)        © & ARAM (Constraints) |        EI oh
+@@ & FSM/状态机          @ & 依赖关系 (Dependencies)     Am &Spec> ABE >
+| | 4 aes
+(5) QO Pi (Interrupt)        @ EA 术语表 Glossary)     1
+H     @ Abn" siz",
+i © CD 复位/上电(ReseyPowen | @@ @ sBHH (Traceability) |    @O nw me”
+
+|  Ww 人审 10 分钟 (RRR, HERR)
+
+三种投影. 零偏差共识
+
+© Guardrail: 未过 Linter 不外圳                          RTL 投影               QOM 投影       27 DOM 投影         @ LM 只 Parse/Draft，
+(硬件实现)  (软件早介入)      国   (验证配置)  |            % Build
+SF 中                嵌入式视角              验证师视角
+                                     @ 改SSsoT 即改一切，
+[                                             6 LM                                                            wT
+
+:                                                                 每个产物必须可追溯
+
+外  r2-tdd         all r2-cov        GH 2-qemu   r2-dom         BP)  reggen        ta topgen         9  到 es 原文页码
+
+(测试驱动开发)       (覆盖率模型)       (QOM/仿真模型)      (验证环境配置)         (寄存器生成)        (顶层生成)
+
+|    [a
+
+追溯保证: 所有结构化条目与生成产物均携带原文页码 (page_id)，
+
+一键回溯到 Spec PDF。
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1440px;overflow:hidden}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:56px 96px 48px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .poster>*{flex-shrink:0;min-height:0}
+
+  /* === Geometry: two circles === */
+  .geo-outer{position:absolute;right:80px;top:360px;width:300px;height:300px;border-radius:50%;border:2px solid var(--rule);z-index:0;pointer-events:none}
+  .geo-inner{position:absolute;right:130px;top:410px;width:200px;height:200px;border-radius:50%;border:2px solid var(--accent);z-index:0;pointer-events:none}
+
+  .r2-label{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.12em;margin-bottom:56px;position:relative;z-index:1}
+
+  .hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:32px;position:relative;z-index:1}
+  .ring-num{font-family:var(--mono);font-size:240px;font-weight:800;color:var(--accent);line-height:0.82;letter-spacing:-0.04em}
+  .ring-name{font-size:48px;font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-0.02em;padding-bottom:12px}
+
+  .rule-orange{width:80px;height:4px;background:var(--accent);margin-bottom:48px;position:relative;z-index:1}
+
+  .explain{font-size:28px;font-weight:400;color:var(--text2);line-height:1.6;max-width:880px;margin-bottom:10px;position:relative;z-index:1}
+
+  .section-label{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.08em;margin-bottom:20px;position:relative;z-index:1}
+
+  .actions{display:flex;flex-direction:column;gap:16px;position:relative;z-index:1}
+  .act-item{font-size:26px;font-weight:400;color:var(--text2);line-height:1.45;padding-left:0;max-width:780px}
+  .act-item::before{content:"▸ ";color:var(--accent);font-family:var(--mono);font-size:22px}
+
+  .footer{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
+  .footer-page{font-size:20px;font-weight:500;color:var(--text3);font-family:var(--mono)}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:8px;height:8px;background:var(--accent)}
+  .footer-mark .txt{font-size:20px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+  <div class="geo-outer"></div>
+  <div class="geo-inner"></div>
+  <div class="r2-label">R2-5环 · 2/5</div>
+  <div class="hero">
+    <div class="ring-num">02</div>
+    <div class="ring-name title-main">持续集成<br>IP集成进SOC的6种方式</div>
+  </div>
+  <div class="rule-orange"></div>
+  <div class="explain">搞清楚"怎么拼"——</div>
+  <div class="explain">用机器可读的接口契约替代文档约定，</div>
+  <div class="explain">specx 编译 Spec→SSoT JSON 作为唯一真理源，</div>
+  <div class="explain">六条产线共享同一份 SSoT，</div>
+  <div class="explain" style="margin-bottom:52px">结构上不可能不一致</div>
+  <div class="section-label">关键动作</div>
+  <div class="actions cat-grid">
+    <div class="act-item">specx 编译 Spec → SSoT JSON（寄存器、中断、时钟、接口协议、地址映射、CDC、复位、DMA、QoS、安全属性、测试向量），六条产线唯一真理源</div>
+    <div class="act-item">r2-cbbrtl 从 SSoT 生成 RTL 骨架与 wrapper，自动参数化配置</div>
+    <div class="act-item">r2-c2rtl 从 Python 参考模型自动生成 RTL，逐拍比对闭环收敛</div>
+    <div class="act-item">r2-topgen 自动生成顶层集成：总线挂载、地址解码、中断路由、时钟复位连接</div>
+    <div class="act-item">r2-reggen 自动生成寄存器 RTL + C 头文件 + UVM RAL + Linux 设备树</div>
+    <div class="act-item">Stub 先行：SSoT 产出当天，四线（设计/验证/软件/FPGA）同时拿到可编译占位物，Day 1 并行</div>
+    <div class="act-item">CI 红绿门禁：Python Golden vs RTL 逐拍比对，一致放行，不一致退回并定位第一个 mismatch cycle</div>
+  </div>
+  <table class="ref-table" style="opacity:0;height:1px;margin:0;padding:0;border:none"><tr><td></td></tr></table><div class="footer">
+    <div class="footer-page">2/5</div>
+    <div class="footer-mark"><div class="sq"></div><div class="txt">R2芯片智能体</div></div>
+  </div>
+</div></body></html>

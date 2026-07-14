@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>R2-AIOS 课程地图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF; --ink: #141414; --line: #C9C4BC;
+    --warm1: #F0ECDF; --warm2: #E8E3D6; --dark: #141414;
+    --orange: #E8501F; --muted: #5A5650;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px; height: 1440px; overflow: hidden;
+    background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans SC", "PingFang SC", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .poster {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; background: var(--bg);
+  }
+  .rule { height: 6px; display: grid; grid-template-columns: 80px 1fr; flex-shrink: 0; }
+  .rule .o { background: var(--orange); }
+  .rule .b { background: var(--ink); }
+
+  .header {
+    flex-shrink: 0; padding: 10px 26px 7px;
+    display: grid; grid-template-columns: 1fr auto;
+    border-bottom: 1px solid var(--ink);
+  }
+  .title { font-size: 28px; font-weight: 900; line-height: 1.08; letter-spacing: -0.02em; }
+  .title .r2 { color: var(--orange); }
+  .subtitle { margin-top: 3px; font-size: 12px; color: var(--muted); font-weight: 500; line-height: 1.35; }
+  .meta {
+    font-family: "JetBrains Mono", monospace; font-size: 10px;
+    text-align: right; line-height: 1.5; color: var(--muted); padding-top: 1px;
+  }
+  .meta b { color: var(--ink); font-weight: 700; }
+
+  .anchor {
+    flex-shrink: 0; background: var(--dark); color: #F7F4EF;
+    display: grid; grid-template-columns: 88px 1fr; min-height: 42px; align-items: center;
+  }
+  .anchor .label {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+    color: var(--orange); letter-spacing: 0.1em; padding-left: 26px;
+  }
+  .anchor .formula { font-size: 13px; font-weight: 500; line-height: 1.35; padding: 7px 26px 7px 0; }
+  .anchor .formula b { color: var(--orange); font-weight: 700; }
+
+  /* pipeline */
+  .pipe {
+    flex-shrink: 0; padding: 7px 26px 6px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--warm1);
+  }
+  .pipe .lab {
+    font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 700;
+    color: var(--orange); letter-spacing: 0.08em; margin-bottom: 5px;
+  }
+  .pipe .track {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+  }
+  .pipe .node {
+    border: 1px solid var(--ink); background: var(--bg);
+    padding: 5px 4px 4px; text-align: center;
+  }
+  .pipe .node .k {
+    font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 700;
+    color: var(--orange); line-height: 1;
+  }
+  .pipe .node .t { font-size: 11px; font-weight: 700; margin-top: 2px; line-height: 1.2; }
+  .pipe .node .s { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .pipe .chain {
+    margin-top: 4px; font-size: 10.5px; color: var(--muted); line-height: 1.3;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .body {
+    flex: 1; padding: 5px 26px 3px;
+    display: flex; flex-direction: column; gap: 4px; min-height: 0;
+  }
+
+  .mod {
+    border: 1px solid var(--ink);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .mod.p1 { flex: 1.35; }
+  .mod.p2 { flex: 1.1; }
+  .mod.p3 { flex: 0.85; }
+  .mod.p4 { flex: 0.85; }
+  .mod.decode { flex: 0.9; }
+
+  .mod .hd {
+    display: grid; grid-template-columns: 44px 1fr auto;
+    align-items: center; gap: 8px;
+    padding: 4px 8px; background: var(--dark); color: #F7F4EF; flex-shrink: 0;
+  }
+  .mod .hd .num {
+    font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700;
+    color: var(--orange); line-height: 1;
+  }
+  .mod .hd .name { font-size: 13px; font-weight: 700; line-height: 1.15; }
+  .mod .hd .sub { font-size: 10.5px; color: rgba(247,244,239,0.7); margin-top: 1px; }
+  .mod .hd .cnt {
+    font-family: "JetBrains Mono", monospace; font-size: 10px;
+    color: var(--orange); font-weight: 700;
+  }
+
+  .items {
+    display: grid; grid-template-columns: 1fr 1fr;
+    flex: 1; min-height: 0;
+  }
+  .item {
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 4px; align-items: start;
+    padding: 3px 7px; border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: 11px; line-height: 1.3;
+  }
+  .item:nth-child(2n) { border-right: none; }
+  .items.odd .item:last-child {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+  .item:nth-child(4n+1), .item:nth-child(4n+2) { background: var(--warm1); }
+  .item:nth-child(4n+3), .item:nth-child(4n+4) { background: var(--bg); }
+  .item .n {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+    color: var(--orange); line-height: 1.3;
+  }
+  .item .tx { font-weight: 500; }
+
+  .decode-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    flex: 1; min-height: 0;
+  }
+  .ditem {
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 5px 8px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .ditem:nth-child(3n) { border-right: none; }
+  .ditem:nth-child(n+4) { border-bottom: none; }
+  .ditem:nth-child(odd) { background: var(--warm2); }
+  .ditem:nth-child(even) { background: var(--warm1); }
+  .ditem .n {
+    font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 700;
+    color: var(--orange); line-height: 1;
+  }
+  .ditem .tx { font-size: 11px; line-height: 1.3; font-weight: 500; }
+
+  .stats {
+    flex-shrink: 0; display: grid; grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--ink); margin-top: 1px;
+  }
+  .stat {
+    padding: 5px 8px; border-right: 1px solid var(--ink); text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+  .stat:nth-child(odd) { background: var(--warm1); }
+  .stat .k {
+    font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 700;
+    color: var(--orange); letter-spacing: 0.06em;
+  }
+  .stat .v { font-size: 12px; font-weight: 700; margin-top: 1px; }
+
+  .footer {
+    flex-shrink: 0; display: grid; grid-template-columns: 1fr auto;
+    align-items: center; padding: 7px 26px 9px;
+    border-top: 1px solid var(--ink);
+  }
+  .footer .sum { font-size: 11.5px; font-weight: 500; line-height: 1.3; color: var(--muted); }
+  .footer .sum b { color: var(--ink); }
+  .footer .brand { text-align: right; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .footer .brand small {
+    display: block; font-family: "JetBrains Mono", monospace;
+    font-size: 9px; color: var(--muted); font-weight: 500; margin-top: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="rule"><div class="o"></div><div class="b"></div></div>
+
+  <div class="header">
+    <div>
+      <div class="title"><span class="r2">R2-</span>AIOS 芯片智能体操作系统 · 课程地图</div>
+      <div class="subtitle">把芯片研发编译成可签核的智能产线 · 让 AI 执行，让机器裁判，让人签核</div>
+    </div>
+    <div class="meta">
+      MAP <b>26 项 · 4 模块</b><br>
+      SPEC <b>3:4 · 1080×1440</b><br>
+      SRC <b>课程地图 v5</b><br>
+      PATH <b>1314520 → 产线</b>
+    </div>
+  </div>
+
+  <div class="anchor">
+    <div class="label">ANCHOR</div>
+    <div class="formula">
+      R2-AIOS 把芯片研发编译成 <b>可反馈 · 可验证 · 可复用 · 可签核</b> 的工作流体系
+    </div>
+  </div>
+
+  <div class="pipe">
+    <div class="lab">PIPELINE · 智能产线曲线</div>
+    <div class="track">
+      <div class="node"><div class="k">START</div><div class="t">1314520</div><div class="s">起点</div></div>
+      <div class="node"><div class="k">P1</div><div class="t">R2-AIOS</div><div class="s">9 项</div></div>
+      <div class="node"><div class="k">P2</div><div class="t">R2-Arch</div><div class="s">7 项</div></div>
+      <div class="node"><div class="k">P3</div><div class="t">Verismart</div><div class="s">5 项</div></div>
+      <div class="node"><div class="k">P4</div><div class="t">ProductSmart</div><div class="s">5 项</div></div>
+      <div class="node"><div class="k">END</div><div class="t">智能产线</div><div class="s">终点</div></div>
+    </div>
+    <div class="chain">1314520 → R2-AIOS → R2-Arch → R2-Verismart-AIOS → R2-ProductSmart → 智能产线</div>
+  </div>
+
+  <div class="body">
+    <!-- P1 -->
+    <div class="mod p1">
+      <div class="hd">
+        <div class="num">P1</div>
+        <div>
+          <div class="name">R2-AIOS-1314520</div>
+          <div class="sub">操作系统底座：1314520 + 八子系统</div>
+        </div>
+        <div class="cnt">9 项 · 01–09</div>
+      </div>
+      <div class="items odd">
+        <div class="item"><div class="n">01</div><div class="tx">芯片工程师使用 AI 的 3 个痛点和 3 个误区</div></div>
+        <div class="item"><div class="n">02</div><div class="tx">R2-AIOS：借鉴秦的法/术/势，编译 IC 研发操作系统</div></div>
+        <div class="item"><div class="n">03</div><div class="tx">r2-learn：四段蒸馏飞轮，让失败回流为预防</div></div>
+        <div class="item"><div class="n">04</div><div class="tx">r2-specx：给 pdf spec 装上编译引擎，机器可读驱动交付闭环</div></div>
+        <div class="item"><div class="n">05</div><div class="tx">r2-loop：从避免失败到利用失败，循环工程的记忆飞轮与组织进化</div></div>
+        <div class="item"><div class="n">06</div><div class="tx">r2-skill：你的 Skill 是便利贴还是 IP，帮团队将经验资产化</div></div>
+        <div class="item"><div class="n">07</div><div class="tx">r2-eda：20 类定制 EDA 及 cli，为智能引擎提供确定底座</div></div>
+        <div class="item"><div class="n">08</div><div class="tx">r2-knowledge：决策飞轮，构建人和 Agent 都能消费的轻量知识库</div></div>
+        <div class="item"><div class="n">09</div><div class="tx">r2-4role：Peter 设目标，Andy 做设计，Vicky 当裁判，Fred 建产线</div></div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="mod p2">
+      <div class="hd">
+        <div class="num">P2</div>
+        <div>
+          <div class="name">R2-Arch 敏捷架构探索</div>
+          <div class="sub">三刀法 + IP 集成 + topgen</div>
+        </div>
+        <div class="cnt">7 项 · 10–16</div>
+      </div>
+      <div class="items odd">
+        <div class="item"><div class="n">10</div><div class="tx">r2-harness：效率来自反馈，持续交付可工作的内容</div></div>
+        <div class="item"><div class="n">11</div><div class="tx">r2-3way：三刀法，以语言为刀，最小化试错成本</div></div>
+        <div class="item"><div class="n">12</div><div class="tx">r2-ip：集成一颗 IP 进 SoC，结构是因，复用是果</div></div>
+        <div class="item"><div class="n">13</div><div class="tx">r2-arch：架构探索九步收敛，编译持续交付的芯片产线</div></div>
+        <div class="item"><div class="n">14</div><div class="tx">r2-cbbrtl：RTL 从能不能写到敢不敢用，CBB 标注四维映射</div></div>
+        <div class="item"><div class="n">15</div><div class="tx">r2-c2rtl：错题驱动迭代，编译可信赖的 Verilog</div></div>
+        <div class="item"><div class="n">16</div><div class="tx">r2-soc-integration：可定制的 SOC 开放集成平台</div></div>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="mod p3">
+      <div class="hd">
+        <div class="num">P3</div>
+        <div>
+          <div class="name">R2-Verismart-AIOS 敏捷验证流水线</div>
+          <div class="sub">VPlan + 覆盖率 + Debug 闭环</div>
+        </div>
+        <div class="cnt">5 项 · 17–21</div>
+      </div>
+      <div class="items odd">
+        <div class="item"><div class="n">17</div><div class="tx">r2-vplan：人和智能体都觉得好用的 VPlan，从怎么验到验什么</div></div>
+        <div class="item"><div class="n">18</div><div class="tx">r2-cov：都江堰模型，为什么说约束是自适应的引擎</div></div>
+        <div class="item"><div class="n">19</div><div class="tx">r2-debug：八段闭环驱动负反馈，让出错回流预防</div></div>
+        <div class="item"><div class="n">20</div><div class="tx">R2-Verismart-AIOS：以 DUT 为中心的验证流水线</div></div>
+        <div class="item"><div class="n">21</div><div class="tx">r2-dvbuild：响应式柔性验证流水线（PCIVAR）</div></div>
+      </div>
+    </div>
+
+    <!-- P4 -->
+    <div class="mod p4">
+      <div class="hd">
+        <div class="num">P4</div>
+        <div>
+          <div class="name">R2-ProductSmart 芯片产品经理框架</div>
+          <div class="sub">芯片 PM 框架与 Sprint 校准</div>
+        </div>
+        <div class="cnt">5 项 · 22–26</div>
+      </div>
+      <div class="items odd">
+        <div class="item"><div class="n">22</div><div class="tx">r2-chip-pm：人定方向，AI 算路径——芯片产品经理的决策法则</div></div>
+        <div class="item"><div class="n">23</div><div class="tx">r2-chip-pm：选战场、定代际差、裁指标——产品经理的三个决策时刻</div></div>
+        <div class="item"><div class="n">24</div><div class="tx">r2-chip-pm：从需求到价值：四步厘清，编译可签核的决策输入</div></div>
+        <div class="item"><div class="n">25</div><div class="tx">r2-chip-pm：七层洋葱全覆盖：从企业战略到每日，产品决策链路</div></div>
+        <div class="item"><div class="n">26</div><div class="tx">r2-chip-pm：一轮 Sprint 一轮校准，持续驱动产品演进</div></div>
+      </div>
+    </div>
+
+    <!-- 解码 -->
+    <div class="mod decode">
+      <div class="hd">
+        <div class="num">解码</div>
+        <div>
+          <div class="name">1314520 · 产品母本数字展开</div>
+          <div class="sub">1 · 3 · 11 · 4 · 5 · 20</div>
+        </div>
+        <div class="cnt">6 条</div>
+      </div>
+      <div class="decode-grid">
+        <div class="ditem"><div class="n">1</div><div class="tx">一个统一：Spec → SSoT，六条产线同源</div></div>
+        <div class="ditem"><div class="n">3</div><div class="tx">三刀法：隔离爆炸半径，短闭环降反馈代价，发布火车载节奏</div></div>
+        <div class="ditem"><div class="n">11</div><div class="tx">十一类 Skills：原子能力组合成产线</div></div>
+        <div class="ditem"><div class="n">4</div><div class="tx">四角色：产品 / 架构 / 验证 / 流程，互相制衡</div></div>
+        <div class="ditem"><div class="n">5</div><div class="tx">五条主线：从探索到进化的工作流规则</div></div>
+        <div class="ditem"><div class="n">20</div><div class="tx">二十个 R2-EDA：确定性 syscall，覆盖 Spec → RTL → 验证 → 调试</div></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">ITEMS</div><div class="v">26 项完整地图</div></div>
+      <div class="stat"><div class="k">MODULES</div><div class="v">P1–P4 四模块</div></div>
+      <div class="stat"><div class="k">MOTHER</div><div class="v">1314520 母本</div></div>
+      <div class="stat"><div class="k">QUAL</div><div class="v">可反馈·可验证·可复用·可签核</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="sum">智能产线曲线 · <b>26 项完整地图</b> · 从 1314520 编译到可签核工作流</div>
+    <div class="brand">R2芯片智能体<small>R2 · CHIP · AGENT</small></div>
+  </div>
+</div>
+</body>
+</html>

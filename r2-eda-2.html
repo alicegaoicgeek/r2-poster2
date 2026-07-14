@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:52px 88px 48px;display:flex;flex-direction:column}
+  .poster>*{flex-shrink:0;min-height:0}
+
+  .r2-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px}
+  .r2-badge .sq{width:8px;height:8px;background:var(--accent)}
+  .r2-badge .txt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:0.14em}
+
+  h1{font-size:44px;font-weight:700;line-height:1.2;color:var(--text);letter-spacing:-0.02em;margin-bottom:10px}
+
+  .rule{width:56px;height:2px;background:var(--accent);margin-bottom:28px}
+
+  .sections{display:flex;flex-direction:column}
+
+  .section{border-top:1px solid var(--rule2);padding:16px 0}
+  .section:first-child{border-top:2px solid var(--text)}
+  .section:last-child{border-bottom:2px solid var(--text)}
+
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .sec-num{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);line-height:1.3;min-width:28px}
+  .sec-title{font-size:28px;font-weight:700;color:var(--text);line-height:1.3}
+
+  .sec-body{font-size:24px;color:var(--text2);line-height:1.5;overflow-wrap:break-word}
+  .sec-body p{margin-bottom:10px}
+  .sec-body p:last-child{margin-bottom:0}
+
+  .closing{border-top:1px solid var(--rule);padding-top:28px;font-size:24px;color:var(--text2);font-weight:500;line-height:1.5;overflow-wrap:break-word}
+
+  .footer{margin-top:auto;display:flex;justify-content:flex-end}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em;font-family:var(--sans)}
+</style></head>
+<body><div class="poster">
+
+  <div class="r2-badge">
+    <div class="sq"></div>
+    <div class="txt">R2-EDA</div>
+  </div>
+
+  <h1>AI 用 EDA 的方式，跟人有三大根本区别</h1>
+
+  <div class="rule"></div>
+
+  <div class="sections">
+    <div class="section">
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <span class="sec-title">榫卯结构</span>
+      </div>
+      <div class="sec-body">
+        <p>主智能体把智能组件和自动组件像榫卯结构一样<br>
+        构建很复杂但稳定的工作流。<br>
+        智能组件毫秒级、分钟级不断调用工具，<br>
+        比人使用工具的频率高 1000 倍。</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <span class="sec-title">极限并行化</span>
+      </div>
+      <div class="sec-body">
+        <p>在预算和管理能力的范围内<br>
+        可以拉起成千上万个智能体。</p>
+        <p>人脑的工作流是 CPU → AI 的工作流是 GPU</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <span class="sec-title">AI 现场给自己造工具</span>
+      </div>
+      <div class="sec-body">
+        <p>从相似案例和成功失败路径中快速打磨出可用脚本，<br>
+        左脚踩右脚，快速提升自身能力。</p>
+        <p>实例：cbbrtl — CBB库匹配 + AI补残差 + FEC等价兜底</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing">
+    人倾向用固定的脚本、固定的流水线、不要变化。<br>
+    AI 可以突破这个局限，有更新的玩法。
+  </div>
+
+  <div class="footer">
+    <div class="footer-mark">
+      <div class="sq"></div>
+      <span class="txt">R2芯片智能体</span>
+    </div>
+  </div>
+
+</div></body></html>

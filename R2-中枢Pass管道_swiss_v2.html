@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>R2-中枢 · Pass · 管道</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #141414;
+    --line: #C9C4BC;
+    --warm1: #F0ECDF;
+    --warm2: #E8E3D6;
+    --dark: #141414;
+    --orange: #E8501F;
+    --muted: #5A5650;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px; height: 1440px; overflow: hidden;
+    background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans SC", "PingFang SC", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .poster {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; background: var(--bg);
+  }
+  .rule { height: 6px; display: grid; grid-template-columns: 80px 1fr; flex-shrink: 0; }
+  .rule .o { background: var(--orange); }
+  .rule .b { background: var(--ink); }
+
+  .header {
+    flex-shrink: 0; padding: 12px 24px 10px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .title { font-size: 34px; font-weight: 900; line-height: 1.08; letter-spacing: -0.02em; }
+  .title .r2 { color: var(--orange); }
+  .subtitle { margin-top: 5px; font-size: 16px; color: var(--muted); font-weight: 500; line-height: 1.35; }
+
+  .anchor {
+    flex-shrink: 0; background: var(--dark); color: #F7F4EF;
+    display: grid; grid-template-columns: 96px 1fr; min-height: 56px; align-items: center;
+  }
+  .anchor .label {
+    font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 700;
+    color: var(--orange); letter-spacing: 0.1em; padding-left: 24px;
+  }
+  .anchor .formula { font-size: 17px; font-weight: 500; line-height: 1.35; padding: 10px 24px 10px 0; }
+  .anchor .formula b { color: var(--orange); font-weight: 700; }
+
+  /* 文字占格 ≥50%：格 hug 文案，禁止 flex 空拉高；主文 ≥16–18px */
+
+  .body {
+    flex: 1; padding: 6px 20px 4px;
+    display: flex; flex-direction: column; gap: 5px; min-height: 0;
+  }
+
+  .sec-head {
+    display: grid; grid-template-columns: 36px 1fr; align-items: end;
+    gap: 8px; border-bottom: 1px solid var(--ink); padding-bottom: 2px; flex-shrink: 0;
+  }
+  .sec-num {
+    font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700;
+    color: var(--orange); line-height: 1;
+  }
+  .sec-title { font-size: 17px; font-weight: 700; line-height: 1.15; }
+  .sec-tag { display: none; }
+
+  /* compare：内容格 hug；栈底余白不算内容格 */
+  .compare {
+    display: grid; grid-template-columns: 1fr 40px 1fr;
+    border: 1px solid var(--ink); flex: 1.6; min-height: 0;
+  }
+  .col {
+    display: flex; flex-direction: column; min-height: 0;
+    border-right: 1px solid var(--ink); background: var(--warm2);
+  }
+  .col:last-child { border-right: none; }
+  .col .ch {
+    flex-shrink: 0; padding: 7px 8px; background: var(--dark); color: #F7F4EF;
+    font-size: 17px; font-weight: 700; text-align: center;
+  }
+  .col .ch span { color: var(--orange); font-family: "JetBrains Mono", monospace; font-size: 12px; margin-left: 6px; }
+  .stack {
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+    justify-content: flex-start;
+  }
+  .box {
+    flex: 0 0 auto;           /* 禁止空拉高 */
+    padding: 8px 10px;        /* 紧 padding */
+    border-bottom: 1px solid var(--line);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .box:last-child { border-bottom: none; }
+  .box:nth-child(4n+1) { background: var(--warm1); }
+  .box:nth-child(4n+3) { background: var(--bg); }
+  .box.out { background: var(--dark); color: #F7F4EF; }
+  .box.out small { color: rgba(247,244,239,0.8); }
+  .box .tag {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
+    color: var(--orange); letter-spacing: 0.04em; margin-bottom: 2px; line-height: 1.1;
+  }
+  .box .t { font-size: 18px; font-weight: 700; line-height: 1.28; }
+  .box small {
+    display: block; font-size: 14px; font-weight: 500; color: var(--muted);
+    margin-top: 2px; line-height: 1.3;
+  }
+  .arr {
+    flex: 0 0 auto; text-align: center; font-size: 12px; font-weight: 700;
+    color: var(--muted); padding: 2px 0; line-height: 1.2;
+    font-family: "JetBrains Mono", monospace;
+    background: var(--warm2); border-bottom: 1px solid var(--line);
+  }
+  .mid {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--dark); color: #F7F4EF; gap: 8px;
+    border-right: 1px solid var(--ink);
+  }
+  .mid .eq {
+    width: 34px; height: 34px; border: 1px solid var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "JetBrains Mono", monospace; font-size: 18px; font-weight: 700;
+    color: var(--orange);
+  }
+  .mid .iso {
+    font-size: 14px; font-weight: 700; writing-mode: vertical-rl;
+    letter-spacing: 0.12em; color: rgba(247,244,239,0.9);
+  }
+
+  /* flow：矮格 + 大字 → 占格达标 */
+  .flow {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    border: 1px solid var(--ink); flex-shrink: 0;
+  }
+  .flow .n {
+    padding: 4px 3px; text-align: center; font-size: 15px; font-weight: 700;
+    border-right: 1px solid var(--ink); line-height: 1.12;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .flow .n:last-child { border-right: none; }
+  .flow .n:nth-child(odd) { background: var(--warm1); }
+  .flow .n:nth-child(even) { background: var(--bg); }
+  .flow .n i {
+    display: block; font-style: normal;
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    color: var(--orange); font-weight: 700; margin-bottom: 0; line-height: 1;
+  }
+
+  /* bottom 3：格 hug 或均分但不留大空 */
+  .bottom {
+    display: grid; grid-template-columns: 1.1fr 1fr 1fr;
+    border: 1px solid var(--ink); flex: 0 0 auto; min-height: 0;
+  }
+  .bcard {
+    border-right: 1px solid var(--ink); padding: 8px 9px 8px;
+    display: flex; flex-direction: column; gap: 5px; min-height: 0;
+  }
+  .bcard:last-child { border-right: none; }
+  .bcard:nth-child(1) { background: var(--warm2); }
+  .bcard:nth-child(2) { background: var(--warm1); }
+  .bcard:nth-child(3) { background: var(--bg); }
+  .bcard h3 {
+    font-size: 16px; font-weight: 700;
+    border-bottom: 1px solid var(--line); padding-bottom: 4px; line-height: 1.2;
+  }
+  .bcard h3 span {
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    color: var(--orange); margin-right: 4px;
+  }
+  .motto {
+    font-size: 17px; font-weight: 700; line-height: 1.45;
+  }
+  .motto b { color: var(--orange); }
+  .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .role {
+    font-size: 15px; font-weight: 600; line-height: 1.25;
+    padding: 6px 7px; background: var(--bg); border: 1px solid var(--line);
+  }
+  .role b {
+    font-family: "JetBrains Mono", monospace; color: var(--orange); font-size: 14px;
+    display: block; margin-bottom: 1px;
+  }
+  .note {
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    border-top: 1px solid var(--line); padding-top: 4px; line-height: 1.3;
+  }
+  .pipe3 { display: flex; flex-direction: column; gap: 2px; }
+  .pipe3 .p {
+    font-size: 15px; font-weight: 600; line-height: 1.2;
+    padding: 5px 6px; border: 1px solid var(--line);
+  }
+  .pipe3 .p:nth-child(1) { background: var(--warm1); }
+  .pipe3 .p:nth-child(2) { background: var(--warm2); }
+  .pipe3 .p:nth-child(3) { background: var(--bg); }
+  .pipe3 .p b {
+    font-family: "JetBrains Mono", monospace; color: var(--orange); font-size: 14px;
+  }
+  .pipe-note {
+    font-size: 12px; color: var(--muted); line-height: 1.3;
+    border-top: 1px solid var(--line); padding-top: 4px;
+  }
+
+  .slogan-bar {
+    flex-shrink: 0; background: var(--dark); color: #F7F4EF;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    text-align: center; font-size: 18px; font-weight: 700;
+  }
+  .slogan-bar span {
+    padding: 6px 6px; border-right: 1px solid rgba(247,244,239,0.15);
+    line-height: 1.1;
+  }
+  .slogan-bar span:last-child { border-right: none; }
+  .slogan-bar b { color: var(--orange); }
+
+  .footer {
+    flex-shrink: 0; display: grid; grid-template-columns: 1fr auto;
+    align-items: center; padding: 10px 24px 12px;
+    border-top: 1px solid var(--ink);
+  }
+  .footer .sum { font-size: 14px; font-weight: 500; line-height: 1.35; color: var(--muted); }
+  .footer .sum b { color: var(--ink); }
+  .footer .brand { text-align: right; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .footer .brand small {
+    display: block; font-family: "JetBrains Mono", monospace;
+    font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="rule"><div class="o"></div><div class="b"></div></div>
+
+  <div class="header">
+    <div class="title"><span class="r2">R2-</span>中枢 · Pass · 管道</div>
+    <div class="subtitle">把芯片研发编译成可反馈、可验证、可复用、可签核的智能产线 · R2-AIOS-1314520</div>
+  </div>
+
+  <div class="anchor">
+    <div class="label">ANCHOR</div>
+    <div class="formula">
+      中枢 = <b>IR</b>：对象与规则 · Pass = 产线工位 · AI / EDA = 可换后端管道 · 人在外圈签核
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div class="sec-title">编译器 ＝ 同构 ＝ R2 智能产线</div>
+      <div class="sec-tag">COMPILER ↔ R2 PIPELINE</div>
+    </div>
+
+    <div class="compare">
+      <div class="col">
+        <div class="ch">编译器 <span>LEFT</span></div>
+        <div class="stack">
+          <div class="box">
+            <div class="tag">SRC</div>
+            <div class="t">源码</div>
+            <small>高级意图：C / 需求描述</small>
+          </div>
+          <div class="arr">↓ 前端</div>
+          <div class="box">
+            <div class="tag">IR</div>
+            <div class="t">中间表示</div>
+            <small>全流程围绕它运转</small>
+          </div>
+          <div class="arr">↓</div>
+          <div class="box">
+            <div class="tag">PASS</div>
+            <div class="t">分析 / 转换 / 优化</div>
+            <small>每个工位只做一件事</small>
+          </div>
+          <div class="arr">↓ 后端</div>
+          <div class="box">
+            <div class="tag">BACKEND</div>
+            <div class="t">指令选择 · 汇编 · 链接</div>
+            <small>可换目标机器</small>
+          </div>
+          <div class="arr">↓</div>
+          <div class="box out">
+            <div class="tag">OUT</div>
+            <div class="t">可运行结果</div>
+            <small>程序产物</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="mid">
+        <div class="eq">=</div>
+        <div class="iso">同构</div>
+      </div>
+
+      <div class="col">
+        <div class="ch">R2 智能产线 <span>RIGHT</span></div>
+        <div class="stack">
+          <div class="box">
+            <div class="tag">SPEC</div>
+            <div class="t">Spec / 意图</div>
+            <small>PDF · 需求 · 人的目标</small>
+          </div>
+          <div class="arr">↓ r2-specx</div>
+          <div class="box">
+            <div class="tag">中枢核 = IR</div>
+            <div class="t">SSoT · 芯片对象 · ICD · Oracle 标准</div>
+            <small>换 Claude / VCS，本层稳定</small>
+          </div>
+          <div class="arr">↓ 治理约束</div>
+          <div class="box">
+            <div class="tag">中枢治理</div>
+            <div class="t">三刀法 · 四角色 · Harness×Memory×Loop</div>
+            <small>Skills 组织为 IP</small>
+          </div>
+          <div class="arr">↓ Harness 入口</div>
+          <div class="box">
+            <div class="tag">PASS</div>
+            <div class="t">产线 Skill · Agent 步骤</div>
+            <small>生成 / 连接 / 验证 / 蒸馏</small>
+          </div>
+          <div class="arr">↓ 调用</div>
+          <div class="box">
+            <div class="tag">管道</div>
+            <div class="t">Claude / Codex · VCS / PT · r2-eda · Git / 飞书</div>
+            <small>只执行、只运数据，不定义语义</small>
+          </div>
+          <div class="arr">↓</div>
+          <div class="box out">
+            <div class="tag">外圈</div>
+            <div class="t">可工作特性 · 机器裁判 · 人签核</div>
+            <small>产物 + 签核</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div class="sec-title">数据流</div>
+      <div class="sec-tag">RAW → IR → PASS → PIPE → ORACLE → SIGN</div>
+    </div>
+    <div class="flow">
+      <div class="n"><i>01</i>原料灌入</div>
+      <div class="n"><i>02</i>specx → IR</div>
+      <div class="n"><i>03</i>Pass 加工</div>
+      <div class="n"><i>04</i>调后端管道</div>
+      <div class="n"><i>05</i>结果回 IR</div>
+      <div class="n"><i>06</i>Oracle</div>
+      <div class="n"><i>07</i>人签核</div>
+    </div>
+
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div class="sec-title">口诀 · 四角色 · 管道三义</div>
+      <div class="sec-tag">MOTTO · ROLES · PIPE×3</div>
+    </div>
+    <div class="bottom">
+      <div class="bcard">
+        <h3><span>03A</span>口诀</h3>
+        <p class="motto">
+          <b>IR</b> 是法律。<br>
+          <b>Pass</b> 是工位。<br>
+          工具是管道。<br>
+          人在外圈签核。<br>
+          AI 是加速工位，不是中枢。
+        </p>
+      </div>
+      <div class="bcard">
+        <h3><span>03B</span>四角色</h3>
+        <div class="roles">
+          <div class="role"><b>Peter</b>目标与价值</div>
+          <div class="role"><b>Andy</b>切分·接口·抽象</div>
+          <div class="role"><b>Vicky</b>可判定契约</div>
+          <div class="role"><b>Fred</b>Harness 产线</div>
+        </div>
+        <div class="note">先定 Vicky 如何判 PASS，再定调用哪些工具。</div>
+      </div>
+      <div class="bcard">
+        <h3><span>03C</span>「管道」三义</h3>
+        <div class="pipe3">
+          <div class="p"><b>①</b> 接口通道 · Pipe / Valve / Translator</div>
+          <div class="p"><b>②</b> 产线流水线 · Harness 交付链</div>
+          <div class="p"><b>③</b> 可换后端 · 工具不立法</div>
+        </div>
+        <div class="pipe-note">本图主述第 ③ 义；与编译器后端同构。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slogan-bar">
+    <span>让 <b>AI</b> 执行</span>
+    <span>让 <b>机器</b> 裁判</span>
+    <span>让 <b>人</b> 签核</span>
+  </div>
+
+  <div class="footer">
+    <div class="sum">从系统中心 → 中枢中心 · <b>定义权在 IR</b> · 后端可替换</div>
+    <div class="brand">R2芯片智能体<small>R2 · CHIP · AGENT · V2</small></div>
+  </div>
+</div>
+</body>
+</html>

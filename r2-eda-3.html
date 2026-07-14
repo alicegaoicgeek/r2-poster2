@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><style>
+  :root {
+    --bg: #F7F4EF; --text: #141414; --text2: #666; --text3: #999;
+    --accent: #E8501F; --rule: #D5D0C8; --rule2: #E8E3DB;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1080px;height:1440px;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .poster{width:1080px;height:1440px;padding:52px 88px 48px;display:flex;flex-direction:column}
+
+  .r2-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+  .r2-badge .sq{width:8px;height:8px;background:var(--accent)}
+  .r2-badge .txt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:0.14em}
+
+  h1{font-size:52px;font-weight:700;line-height:1.1;color:var(--text);letter-spacing:-0.02em;margin-bottom:8px}
+
+  .rule{width:56px;height:2px;background:var(--accent);margin-bottom:28px}
+
+  .cat-grid{display:flex;flex-direction:column;margin-bottom:0}
+  .cat-row{display:flex;align-items:flex-start;border-top:1px solid var(--rule2);padding:24px 0}
+  .cat-row:first-child{border-top:2px solid var(--text)}
+  .cat-row:last-child{border-bottom:2px solid var(--text)}
+  .cat-idx{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);min-width:40px;line-height:1.35}
+  .cat-body{flex:1;min-width:0;padding-right:16px}
+  .cat-title{font-size:32px;font-weight:600;color:var(--text);line-height:1.35}
+  .cat-detail{font-size:24px;font-weight:400;color:var(--text2);line-height:1.45;margin-top:4px;overflow-wrap:break-word}
+  .cat-detail.mono{font-family:var(--mono);font-size:22px;color:var(--text);line-height:1.35}
+
+  .section-divider{display:flex;flex-direction:column;margin-top:48px}
+  .section-rule-full{width:100%;height:1px;background:var(--rule);margin-bottom:20px}
+  .section-header{font-size:32px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px}
+
+  .footer{margin-top:auto;display:flex;justify-content:flex-end}
+  .footer-mark{display:flex;align-items:center;gap:8px}
+  .footer-mark .sq{width:6px;height:6px;background:var(--accent)}
+  .footer-mark .txt{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.06em}
+</style></head>
+<body><div class="poster">
+
+  <div class="r2-badge">
+    <div class="sq"></div>
+    <div class="txt">R2-EDA</div>
+  </div>
+
+  <h1>Data 有三类</h1>
+
+  <div class="rule"></div>
+
+  <div class="cat-grid">
+    <div class="cat-row">
+      <span class="cat-idx">01</span>
+      <div class="cat-body">
+        <div class="cat-title">IP 生命周期数据</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <span class="cat-idx">02</span>
+      <div class="cat-body">
+        <div class="cat-title">EDA 过程数据</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <span class="cat-idx">03</span>
+      <div class="cat-body">
+        <div class="cat-title">智能体过程数据</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">
+    <div class="section-rule-full"></div>
+    <div class="section-header">芯片设计团队有三类资产</div>
+  </div>
+
+  <div class="cat-grid">
+    <div class="cat-row">
+      <span class="cat-idx">04</span>
+      <div class="cat-body">
+        <div class="cat-title">硬资产 — IP资产</div>
+        <div class="cat-detail">小IP→硬IP→子系统→软IP→可配置IP→平台级复用</div>
+        <div class="cat-detail mono">ipgen → topgen → buildsoc</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <span class="cat-idx">05</span>
+      <div class="cat-body">
+        <div class="cat-title">软资产 — 经验资产</div>
+        <div class="cat-detail">智能体 = skill + cli + 出 loop 的标准</div>
+        <div class="cat-detail">EDA是智能体的工具，智能体生态的有机组成部分</div>
+      </div>
+    </div>
+    <div class="cat-row">
+      <span class="cat-idx">06</span>
+      <div class="cat-body">
+        <div class="cat-title">人才资产 — AIOS</div>
+        <div class="cat-detail">AIOS：组织运用软资产+硬资产交付价值，确保交付的价值最优，达成价值交付的路径最优</div>
+        <div class="cat-detail">这个能力无法通过采购达成，至少一半靠自己</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-mark">
+      <div class="sq"></div>
+      <span class="txt">R2芯片智能体</span>
+    </div>
+  </div>
+
+</div></body></html>
