@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>R2 × FDE · CTO 一页方案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #141414;
+    --orange: #E8501F;
+    --row: #F0ECDF;
+    --row2: #E8E3D6;
+    --line: #C9C4BC;
+    --dim: #5a5a5a;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --sans: 'Noto Sans SC', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1080px; height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: grid;
+    grid-template-rows: 6px auto auto 1fr auto;
+  }
+  .ruler {
+    background: #141414;
+    background-image: linear-gradient(90deg, #E8501F 0 72px, #141414 72px);
+  }
+  .header {
+    padding: 14px 28px 10px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .title {
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.4px;
+  }
+  .title em { color: var(--orange); font-style: normal; }
+  .sub {
+    margin-top: 5px;
+    font-size: 14px;
+    color: var(--dim);
+    line-height: 1.35;
+    font-weight: 600;
+  }
+
+  .anchor {
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 28px;
+  }
+  .anchor .lab {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--orange);
+    margin-bottom: 3px;
+  }
+  .anchor .txt {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  .anchor em { color: var(--orange); font-style: normal; }
+  .anchor .acc {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #C9C4BC;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  .anchor .acc b { color: #F7F4EF; }
+
+  .main {
+    padding: 10px 28px 8px;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+    gap: 8px;
+    min-height: 0;
+  }
+  .sec {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--bg);
+  }
+  .sec-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background: var(--row2);
+    border-bottom: 1px solid var(--ink);
+    flex-shrink: 0;
+  }
+  .num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--orange);
+    min-width: 24px;
+  }
+  .sec-h h3 { font-size: 15px; font-weight: 800; flex: 1; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* 01 pain */
+  .pain {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .pain .c {
+    padding: 10px 12px;
+    border-right: 1px solid var(--ink);
+  }
+  .pain .c:last-child { border-right: none; background: var(--row); }
+  .pain .k {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .pain .t {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  /* 02 offer */
+  .offer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .offer .c {
+    padding: 10px 12px;
+    border-right: 1px solid var(--ink);
+  }
+  .offer .c:last-child { border-right: none; }
+  .offer .c:nth-child(1) { background: var(--row2); }
+  .offer .c:nth-child(2) { background: var(--row); }
+  .offer .who {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    margin-bottom: 3px;
+  }
+  .offer .name {
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .offer .d {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--dim);
+  }
+
+  /* 03 scenes */
+  .rows { display: flex; flex-direction: column; }
+  .row {
+    display: grid;
+    grid-template-columns: 56px 1.1fr 1.4fr;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:nth-child(odd) { background: var(--row); }
+  .row .t {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--orange);
+  }
+  .row .s {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+  .row .v {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--dim);
+  }
+
+  /* 04 buy */
+  .buy {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .buy .side {
+    border-right: 1px solid var(--ink);
+    padding: 0;
+  }
+  .buy .side:last-child { border-right: none; }
+  .buy .hd {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .buy .side:first-child .hd { background: var(--row); color: var(--ink); }
+  .buy .side:last-child .hd { background: var(--ink); color: var(--orange); }
+  .buy .li {
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    border-bottom: 1px solid var(--line);
+  }
+  .buy .li:last-child { border-bottom: none; }
+  .buy .side:first-child .li:nth-child(even) { background: var(--bg); }
+  .buy .side:last-child .li { background: var(--row); }
+  .buy .side:last-child .li:nth-child(even) { background: var(--row2); }
+
+  /* 05 pilot */
+  .pilot {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+  .pilot .left, .pilot .right {
+    padding: 10px 12px;
+  }
+  .pilot .left { border-right: 1px solid var(--ink); background: var(--row); }
+  .pilot .right { background: var(--ink); color: #F7F4EF; }
+  .pilot .k {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .pilot ol {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .pilot li {
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 4px;
+  }
+  .pilot .right li { color: #F7F4EF; }
+  .pilot .right .k { color: var(--orange); }
+
+  .footer {
+    border-top: 1px solid var(--ink);
+    background: var(--ink);
+    color: #F7F4EF;
+    padding: 10px 28px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: end;
+  }
+  .footer .one {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .footer .one b { color: var(--orange); }
+  .footer .right {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #C9C4BC;
+    line-height: 1.5;
+  }
+  .footer .brand {
+    color: #F7F4EF;
+    font-weight: 700;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="ruler"></div>
+
+<header class="header">
+  <div class="meta">R2 · FDE · CTO ONE-PAGER · 1080×1440</div>
+  <div class="title">跟 <em>R2</em> 合作：一条可签核的石子路</div>
+  <div class="sub">给 CTO + 技术骨干 · 前线部署（FDE）落地方案 · 非课程导览</div>
+</header>
+
+<section class="anchor">
+  <div class="lab">THESIS</div>
+  <div class="txt">缺的不是更强模型，是一层操作系统。<em>让 AI 执行 · 让机器裁判 · 让人签核</em></div>
+  <div class="acc">验收：<b>Agent 在 Harness 里跑到 Oracle 全绿，人只签一次，且下次不用重来。</b></div>
+</section>
+
+<main class="main">
+
+  <!-- 01 -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="num">01</span>
+      <h3>为什么投了还不动</h3>
+      <span class="tag">DIAGNOSIS</span>
+    </div>
+    <div class="pain">
+      <div class="c">
+        <div class="k">空间</div>
+        <div class="t">Agent 交付物拼不起来，无硬契约</div>
+      </div>
+      <div class="c">
+        <div class="k">时间</div>
+        <div class="t">AI 等人批 · 人心流碎裂</div>
+      </div>
+      <div class="c">
+        <div class="k">总命题</div>
+        <div class="t">人 / AI / EDA 未组织成系统</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="num">02</span>
+      <h3>合作形态 · 三方</h3>
+      <span class="tag">FDE MODEL</span>
+    </div>
+    <div class="offer">
+      <div class="c">
+        <div class="who">现场</div>
+        <div class="name">FDE</div>
+        <div class="d">进仓库与周会，铺第一条石子路闭环</div>
+      </div>
+      <div class="c">
+        <div class="who">总部</div>
+        <div class="name">R2-AIOS</div>
+        <div class="d">Harness×Oracle×Memory×Loop，坑变公路</div>
+      </div>
+      <div class="c">
+        <div class="who">你们</div>
+        <div class="name">骨干签核</div>
+        <div class="d">定义「什么是好」；Taste 与最终签字</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="num">03</span>
+      <h3>你会经历的场景</h3>
+      <span class="tag">VALUE IN THE ROOM</span>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div class="t">D0</div>
+        <div class="s">2h 框架对账</div>
+        <div class="v">争论从「买不买 AI」→「缺哪块运行时」</div>
+      </div>
+      <div class="row">
+        <div class="t">W1</div>
+        <div class="s">钉领导优先切口</div>
+        <div class="v">一条真链路，不 Demo、不对齐不干</div>
+      </div>
+      <div class="row">
+        <div class="t">W2–4</div>
+        <div class="s">石子路过门禁</div>
+        <div class="v">AI 生成 → 机械 Oracle 全绿 → 人签一次</div>
+      </div>
+      <div class="row">
+        <div class="t">并行</div>
+        <div class="s">接 CI / EDA</div>
+        <div class="v">从私聊工具变成产线可审计节点</div>
+      </div>
+      <div class="row">
+        <div class="t">~30d</div>
+        <div class="s">真 Demo 拍板</div>
+        <div class="v">证据包 yes/no；经验写回 Skill，非群聊</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="num">04</span>
+      <h3>买什么 · 不买什么</h3>
+      <span class="tag">SCOPE</span>
+    </div>
+    <div class="buy">
+      <div class="side">
+        <div class="hd">买到的</div>
+        <div class="li">FDE 节奏：对账 → 闭环 → 门禁 → 扩面</div>
+        <div class="li">AIOS 纪律：裁判独立 · 人只签核</div>
+        <div class="li">总部抽象：现场坑 → 可复用公路</div>
+        <div class="li">身份迁移：执行者 → 编排者</div>
+      </div>
+      <div class="side">
+        <div class="hd">明确不买</div>
+        <div class="li">无限驻场外包 / 无边界定制</div>
+        <div class="li">AI 替人签核</div>
+        <div class="li">无机械裁判的「速度」</div>
+        <div class="li">囤僵尸 Skill · 课程堆叠</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec">
+    <div class="sec-h">
+      <span class="num">05</span>
+      <h3>30 天试点 · 三条红线</h3>
+      <span class="tag">DECISION</span>
+    </div>
+    <div class="pilot">
+      <div class="left">
+        <div class="k">PILOT</div>
+        <ol>
+          <li>2h 对账 · 10 问现状 · 钉一条真链路</li>
+          <li>FDE + 1 对接 · 跑到 Oracle 全绿</li>
+          <li>错误写回规则 · 禁止只口头复盘</li>
+          <li>30 天复测 · 不上移不扩面</li>
+        </ol>
+      </div>
+      <div class="right">
+        <div class="k">RED LINES</div>
+        <ol>
+          <li>无机械 Oracle，不入库</li>
+          <li>签核不下放</li>
+          <li>Skill 必须代谢</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="one">你买的是可签核智能产线的 <b>第一公里</b>，以及愿意把石子路走通的人。<br>下一步：约一次 <b>2 小时框架对账</b>。</div>
+  <div class="right">
+    <div class="brand">R2芯片智能体</div>
+    R2 · CHIP · AGENT<br>
+    FDE × AIOS · 2026
+  </div>
+</footer>
+
+</body>
+</html>

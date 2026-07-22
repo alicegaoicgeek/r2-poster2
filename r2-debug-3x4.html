@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --text: #141414;
+    --text2: #666666;
+    --text3: #999999;
+    --accent: #E8501F;
+    --rule: #D5D0C8;
+    --rule2: #E8E3DB;
+    --warm-a: #F0ECDF;
+    --warm-b: #E8E3D6;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px; height: 1440px;
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .poster {
+    width: 1080px; height: 1440px;
+    padding: 44px 80px 36px;
+    display: flex; flex-direction: column;
+  }
+  /* === A · R2 标签 === */
+  .r2-label {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.18em; margin-bottom: 18px;
+  }
+  /* === 标题 === */
+  .title-main {
+    font-size: 50px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; line-height: 1.06; margin-bottom: 12px;
+  }
+  .title-main .accent { color: var(--accent); }
+  .subtitle {
+    font-size: 22px; font-weight: 400; color: var(--text2);
+    line-height: 1.45; max-width: 760px;
+  }
+  .subtitle .accent { color: var(--accent); font-weight: 500; }
+  /* === 强调规则线 === */
+  .rule-accent { height: 2px; background: var(--accent); width: 56px; margin: 24px 0 18px; }
+  /* === 区块标题 === */
+  .section-label {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.14em; margin-bottom: 10px;
+  }
+  /* === 阶段横排 (四段式 / 8 段) === */
+  .phases {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 4px;
+  }
+  .phase {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .phase-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    font-family: var(--mono); font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .phase-name {
+    font-size: 18px; font-weight: 600; color: var(--text);
+    white-space: nowrap;
+  }
+  .phase-arr {
+    color: var(--accent); font-size: 18px; margin: 0 10px;
+    font-weight: 700;
+  }
+  /* === 六法网格 (3×2) === */
+  .six-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .six-cell {
+    padding: 14px 18px;
+    border-top: 1px solid var(--rule2);
+    border-left: 1px solid var(--rule2);
+  }
+  .six-cell:nth-child(3n) { border-right: 1px solid var(--rule2); }
+  .six-cell:nth-last-child(-n+3) { border-bottom: 1px solid var(--text); }
+  .six-cell:nth-child(1), .six-cell:nth-child(2), .six-cell:nth-child(3) { border-top: 2px solid var(--text); }
+  .six-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  }
+  .six-idx {
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    color: var(--accent); flex-shrink: 0;
+  }
+  .six-title {
+    font-size: 19px; font-weight: 600; color: var(--text);
+  }
+  .six-detail {
+    font-size: 14px; font-weight: 400; color: var(--text2);
+    line-height: 1.4;
+  }
+  /* === 八段 ref-table === */
+  .ref-table {
+    width: 100%; border-collapse: collapse; table-layout: fixed;
+  }
+  .ref-table th {
+    font-size: 14px; font-weight: 500; color: var(--text3);
+    letter-spacing: 0.06em; text-align: left;
+    padding: 6px 0 8px; border-bottom: 2px solid var(--text);
+  }
+  .ref-table td {
+    font-size: 17px; padding: 8px 0;
+    border-bottom: 1px solid var(--rule2);
+    color: var(--text2); line-height: 1.35;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td.phase-tag {
+    font-family: var(--mono); color: var(--accent); font-weight: 600;
+  }
+  .ref-table td.skill {
+    font-family: var(--mono); color: var(--text); font-weight: 500;
+  }
+  /* === 底部断言 === */
+  .footer-claim {
+    margin-top: 18px; padding-top: 16px;
+    border-top: 2px solid var(--text);
+  }
+  .footer-claim .line1 {
+    font-size: 20px; font-weight: 600; color: var(--text);
+    line-height: 1.45; margin-bottom: 4px;
+  }
+  .footer-claim .line1 .accent { color: var(--accent); }
+  .footer-claim .line2 {
+    font-size: 16px; font-weight: 400; color: var(--text2);
+    line-height: 1.5;
+  }
+  /* === 右下品牌 === */
+  .footer {
+    margin-top: auto; display: flex; justify-content: flex-end;
+    padding-top: 12px;
+  }
+  .footer-mark { display: flex; align-items: center; gap: 8px; }
+  .footer-mark .sq { width: 6px; height: 6px; background: var(--accent); }
+  .footer-mark .txt {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.08em;
+  }
+  /* === 间距 === */
+  .gap-sm { margin-top: 10px; }
+  .gap-md { margin-top: 18px; }
+  .gap-lg { margin-top: 22px; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- A · R2 标签 -->
+  <div class="r2-label">R2-DEBUG · 四渡赤水 × 六法 × 八段</div>
+
+  <!-- 标题 -->
+  <h1 class="title-main">r2-debug：<span class="accent">六法</span>制造信息，<span class="accent">八段</span>闭环回流预防</h1>
+  <p class="subtitle">调试不是证明自己猜对了。调试是 <span class="accent">通过每步行动制造新信息</span>，让下一步选择更准。</p>
+
+  <!-- 橙色强调规则线 -->
+  <div class="rule-accent"></div>
+
+  <!-- 四段式战略地图 -->
+  <div class="section-label">STRATEGY · 四段式（找缝隙 → 观察变化 → 制造信息 → 直捣中枢）</div>
+  <div class="phases">
+    <div class="phase"><div class="phase-num">1</div><span class="phase-name">找缝隙</span></div>
+    <span class="phase-arr">→</span>
+    <div class="phase"><div class="phase-num">2</div><span class="phase-name">观察变化</span></div>
+    <span class="phase-arr">→</span>
+    <div class="phase"><div class="phase-num">3</div><span class="phase-name">制造信息</span></div>
+    <span class="phase-arr">→</span>
+    <div class="phase"><div class="phase-num">4</div><span class="phase-name">直捣中枢</span></div>
+  </div>
+
+  <!-- 六法网格 -->
+  <div class="gap-lg">
+    <div class="section-label">SIX METHODS · 六法（决策层）</div>
+    <div class="six-grid">
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">①</span><span class="six-title">并案</span></div>
+        <div class="six-detail">分桶后选共享信号最少、信息增益最大的先修</div>
+      </div>
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">②</span><span class="six-title">比差</span></div>
+        <div class="six-detail">先看两个版本变了的模块/信号，不看全量</div>
+      </div>
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">③</span><span class="six-title">以动制静</span></div>
+        <div class="six-detail">卡住就动一下，画面差异即线索</div>
+      </div>
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">④</span><span class="six-title">回滚</span></div>
+        <div class="six-detail">攻击 bug 的生存条件而非本体（git bisect）</div>
+      </div>
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">⑤</span><span class="six-title">人类直觉</span></div>
+        <div class="six-detail">从海量数据降维到 3–5 个 failure signature</div>
+      </div>
+      <div class="six-cell">
+        <div class="six-head"><span class="six-idx">⑥</span><span class="six-title">经验回流</span></div>
+        <div class="six-detail">每次结果校准下一步方向，负反馈加速</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 八段 ref-table -->
+  <div class="gap-lg">
+    <div class="section-label">EIGHT STAGES · 八段闭环（工厂层 · 出错回流预防）</div>
+    <table class="ref-table">
+      <colgroup>
+        <col style="width: 8%"><col style="width: 30%"><col style="width: 62%">
+      </colgroup>
+      <thead>
+        <tr><th>阶段</th><th>子 skill</th><th>职责</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="phase-tag">① 预防</td>
+          <td class="skill">r2-xpattern</td>
+          <td>反模式回灌 / 规则 / Linter</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">② 检测</td>
+          <td class="skill">r2-xfail + xindex.stats</td>
+          <td>编译 / 仿真 log → 结构化 FAIL 事件</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">③ 分诊</td>
+          <td class="skill">r2-triage</td>
+          <td>N 个 FAIL 聚类 / 优先级 / 归属（N&gt;1 才启用）</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">④ 定位</td>
+          <td class="skill">r2-xindex.resolve + xwave</td>
+          <td>loc_id / @time → 源码锚点 + 时间窗</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">⑤ 根因</td>
+          <td class="skill">r2-xtrace ⇄ xwave</td>
+          <td>观察 → 假设 → 验证 → 精化</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">⑥ 修复</td>
+          <td class="skill">r2-fix</td>
+          <td>根因报告 → patch 草案（可审计）</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">⑦ 签核</td>
+          <td class="skill">r2-xsign</td>
+          <td>重跑 + 对比 specx 契约，确认不回归</td>
+        </tr>
+        <tr>
+          <td class="phase-tag">⑧ 沉淀</td>
+          <td class="skill">r2-xpattern 入库</td>
+          <td>闭合负反馈，提升①预防</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 底部断言 -->
+  <div class="footer-claim">
+    <div class="line1">兵法决定<span class="accent">第一刀砍哪</span>；工厂保证这一刀的<span class="accent">证据、签核、沉淀还在</span>。</div>
+    <div class="line2">单次失败：xfail → xindex → xwave ⇄ xtrace → fix → xsign → xpattern 入库</div>
+  </div>
+
+  <!-- 右下品牌 -->
+  <div class="footer">
+    <div class="footer-mark">
+      <span class="sq"></span>
+      <span class="txt">R2芯片智能体</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Kimi K3 四件套 · 一页全景</title>
+<style>
+:root{
+  --bg:#F7F4EF; --ink:#1D1D1F; --accent:#E8501F;
+  --row:#F0ECDF; --row2:#E8E3D6; --line:#E0D9C6; --muted:#6E6A5E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1440px;overflow:hidden}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','PingFang SC','Noto Sans SC',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.ruler{display:flex;height:6px;width:1080px}
+.ruler .o{width:132px;background:var(--accent)}
+.ruler .k{flex:1;background:var(--ink)}
+.poster{width:1080px;height:1434px;padding:34px 48px 32px;display:flex;flex-direction:column}
+
+/* ===== 金头 ===== */
+.kicker{
+  display:flex;align-items:center;gap:12px;
+  font-size:15px;letter-spacing:2.5px;color:var(--muted);font-weight:500;
+}
+.kicker::before{content:"";width:26px;height:3px;background:var(--accent)}
+.kicker .r2{margin-left:auto;color:var(--accent);font-weight:600;letter-spacing:1px}
+h1{
+  font-size:56px;font-weight:600;letter-spacing:-1.5px;line-height:1.15;margin-top:18px;
+}
+h1 .no{color:var(--accent)}
+.decode{
+  margin-top:12px;font-size:22px;font-weight:600;letter-spacing:-.3px;
+}
+.decode em{font-style:normal;color:var(--accent)}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;
+}
+.stat{background:var(--row);border:1px solid var(--line);border-radius:12px;padding:14px 18px 12px}
+.stat .n{font-size:32px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .n span{color:var(--accent)}
+.stat .l{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* ===== 栏目标签 ===== */
+.label{
+  display:flex;align-items:center;gap:10px;margin:22px 0 12px;
+  font-size:15px;letter-spacing:2.5px;font-weight:600;color:var(--ink);
+}
+.label::before{content:"";width:10px;height:10px;background:var(--accent);border-radius:2px}
+.label small{color:var(--muted);font-weight:500;letter-spacing:1px}
+
+/* ===== 洞见栏 ===== */
+.insights{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.insight{
+  background:var(--row);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;font-size:16.5px;line-height:1.5;font-weight:500;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.insight .mk{flex:none;width:6px;height:100%;min-height:40px;background:var(--accent);border-radius:3px}
+.insight b{font-weight:600}
+.insight .src{display:block;margin-top:4px;font-size:12.5px;color:var(--muted);font-weight:400}
+
+/* ===== 方法主体 ===== */
+.methods{display:flex;flex-direction:column;gap:8px;flex:1}
+.method{
+  background:var(--row);border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;display:flex;gap:14px;align-items:center;flex:1;
+}
+.mnum{
+  flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--accent);
+  color:var(--accent);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;
+}
+.mbody{flex:1;min-width:0}
+.mtitle{font-size:19px;font-weight:600;letter-spacing:-.2px}
+.mtitle .en{color:var(--muted);font-size:14px;font-weight:500;margin-left:6px}
+.mdesc{font-size:14.5px;color:var(--muted);margin-top:2px;line-height:1.45}
+.mdesc b{color:var(--ink);font-weight:600}
+.mval{
+  flex:none;font-size:13px;color:var(--accent);font-weight:600;
+  border-left:1px solid var(--line);padding-left:14px;max-width:200px;line-height:1.4;
+}
+
+/* ===== 豹尾 ===== */
+.tail{margin-top:18px;border-top:2px solid var(--ink);padding-top:14px;display:flex;align-items:flex-end;gap:20px}
+.tail .punch{font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.4;flex:1}
+.tail .punch em{font-style:normal;color:var(--accent)}
+.tail .src{flex:none;font-size:12.5px;color:var(--muted);text-align:right;line-height:1.6}
+.tail .brand{color:var(--ink);font-weight:600;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- 金头 -->
+  <div class="kicker">文章四件套 · 一页全景<span class="r2">R2</span></div>
+  <h1>Kimi K3 <span class="no">不是</span>中国的 Fable 5</h1>
+  <p class="decode">不是平替，是赢家——<em>开源 2.8 万亿参数，双盲对战正面击败最强闭源</em></p>
+  <div class="stats">
+    <div class="stat"><div class="n">2.8<span>万亿</span></div><div class="l">参数 · 全球首个开放权重 3T 级</div></div>
+    <div class="stat"><div class="n">100<span>万</span></div><div class="l">token 上下文 · 原生视觉</div></div>
+    <div class="stat"><div class="n">76<span>%</span></div><div class="l">CodeArena 双盲胜率 · 登顶</div></div>
+    <div class="stat"><div class="n">17→<span>3</span></div><div class="l">AA 智能排行 · 一次发布跃升</div></div>
+  </div>
+
+  <!-- 洞见（痛点+金句合并） -->
+  <div class="label">洞见<small>INSIGHTS · 痛点 × 金句</small></div>
+  <div class="insights">
+    <div class="insight"><span class="mk"></span><div><b>闭源溢价正被免费权重从内部侵蚀。</b>当「免费的」已经足够好，你凭什么继续收溢价？美国实验室面临封闭对开源、溢价对免费的「双线战争」。</div></div>
+    <div class="insight"><span class="mk"></span><div><b>「落后 6-8 个月」的标签，被一个半月抹平。</b>马斯克 6 月 18 日还说「或许明年一季度」，7 月 17 日 K3 就发布了——进步的速度才是更重要的信号。</div></div>
+    <div class="insight"><span class="mk"></span><div><b>出口管制下，中国开源成了「第二个篮子」。</b>美国前沿模型面临管制，恰恰是开源生态为市场提供了第二选项——鸡蛋不必放一个篮子。</div></div>
+    <div class="insight"><span class="mk"></span><div><b>免费的权重，64 卡的门槛。</b>K3 竞争逻辑不是拼「最聪明」，而是把硬件劣势转化为效率与上下文专长；但部署要 64 卡起步，机会与门槛并存。</div></div>
+  </div>
+
+  <!-- 方法主体 -->
+  <div class="label">方法<small>PLAYBOOK · 7 招直接用</small></div>
+  <div class="methods">
+    <div class="method">
+      <div class="mnum">01</div>
+      <div class="mbody">
+        <div class="mtitle">双盲对战评测<span class="en">CodeArena</span></div>
+        <div class="mdesc">投完票才揭晓模型身份，<b>看胜率不看品牌</b>：K3 76% &gt; Fable5 63% &gt; Sol 58%</div>
+      </div>
+      <div class="mval">排除品牌光环</div>
+    </div>
+    <div class="method">
+      <div class="mnum">02</div>
+      <div class="mbody">
+        <div class="mtitle">多榜单交叉验证<span class="en">3 榜一致才算数</span></div>
+        <div class="mdesc">CodeArena + nextjs.org/evals + AA / Vals；<b>宣称 100% 完成度的都是红旗</b>（峰值仅 92-96%）</div>
+      </div>
+      <div class="mval">不被单一评测带节奏</div>
+    </div>
+    <div class="method">
+      <div class="mnum">03</div>
+      <div class="mbody">
+        <div class="mtitle">系统提示写死约束<span class="en">治「神经质」</span></div>
+        <div class="mdesc">K3 侧重新长程任务，小问题会反复改——<b>写明边界与停止条件</b>，防止它替你做意外决策</div>
+      </div>
+      <div class="mval">不循环 · 不越权</div>
+    </div>
+    <div class="method">
+      <div class="mnum">04</div>
+      <div class="mbody">
+        <div class="mtitle">一句话出网页原型<span class="en">30 分钟</span></div>
+        <div class="mdesc">报身份+给目标（「帮我复刻 XX」），直接生成 HTML；<b>图像音效让模型自产</b>，前置规避版权</div>
+      </div>
+      <div class="mval">可玩 · 无版权隐患</div>
+    </div>
+    <div class="method">
+      <div class="mnum">05</div>
+      <div class="mbody">
+        <div class="mtitle">整库塞进 100 万上下文<span class="en">长程任务</span></div>
+        <div class="mdesc">整个代码库/研究资料装入 1M 窗口跑长任务，多环节用 <b>Agent Swarm</b> 协调子智能体</div>
+      </div>
+      <div class="mval">成本低到可常态化</div>
+    </div>
+    <div class="method">
+      <div class="mnum">06</div>
+      <div class="mbody">
+        <div class="mtitle">按官方配置部署<span class="en">64 卡超节点</span></div>
+        <div class="mdesc">896 专家每次激活 16 个（&lt;2%），用<b>完全平衡的专家并行</b>防负载不均拖低吞吐</div>
+      </div>
+      <div class="mval">稳定无瓶颈</div>
+    </div>
+    <div class="method">
+      <div class="mnum">07</div>
+      <div class="mbody">
+        <div class="mtitle">「第二个篮子」选型<span class="en">开闭源双轨</span></div>
+        <div class="mdesc">工作负载拆到闭源 + 中国开源两个篮子；<b>免费权重逼近闭源时，按此重谈溢价</b></div>
+      </div>
+      <div class="mval">不押注单一选项</div>
+    </div>
+  </div>
+
+  <!-- 豹尾 -->
+  <div class="tail">
+    <div class="punch">一个月，榜首换人；一个半月，代差抹平。<br>别拿 Fable 5 当尺子——<em>它不是中国的 Fable 5，它是 Kimi K3。</em></div>
+    <div class="src">腾讯科技 · 文｜苏扬 · 2026-07-17<br><span class="brand">R2芯片智能体</span></div>
+  </div>
+
+</div>
+</body>
+</html>

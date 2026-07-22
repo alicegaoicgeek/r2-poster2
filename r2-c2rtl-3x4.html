@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --text: #141414;
+    --text2: #666666;
+    --text3: #999999;
+    --accent: #E8501F;
+    --rule: #D5D0C8;
+    --rule2: #E8E3DB;
+    --warm-a: #F0ECDF;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px; height: 1440px;
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .poster {
+    width: 1080px; height: 1440px;
+    padding: 44px 80px 36px;
+    display: flex; flex-direction: column;
+  }
+  .r2-label {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.18em; margin-bottom: 18px;
+  }
+  .title-main {
+    font-size: 50px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; line-height: 1.06; margin-bottom: 12px;
+  }
+  .title-main .accent { color: var(--accent); }
+  .subtitle {
+    font-size: 22px; font-weight: 400; color: var(--text2);
+    line-height: 1.45; max-width: 760px;
+  }
+  .subtitle .accent { color: var(--accent); font-weight: 500; }
+  .rule-accent { height: 2px; background: var(--accent); width: 56px; margin: 24px 0 18px; }
+  .section-label {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.14em; margin-bottom: 10px;
+  }
+  /* === 三条路径 (Path A/B/C) === */
+  .paths {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
+  }
+  .path {
+    padding: 14px 16px;
+    border-top: 1px solid var(--rule2);
+    border-left: 1px solid var(--rule2);
+    background: var(--bg);
+  }
+  .path:nth-child(3) { border-right: 1px solid var(--rule2); }
+  .paths .path:nth-last-child(-n+3) { border-bottom: 1px solid var(--rule2); }
+  .path:nth-last-child(-n+3):nth-child(1),
+  .path:nth-last-child(-n+3):nth-child(2),
+  .path:nth-last-child(-n+3):nth-child(3) { border-bottom: 2px solid var(--text); }
+  .path:nth-child(1), .path:nth-child(2), .path:nth-child(3) { border-top: 2px solid var(--text); }
+  .path-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  }
+  .path-tag {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 2px 8px;
+    background: var(--accent); color: #FFFFFF;
+    font-family: var(--mono); font-size: 14px; font-weight: 700;
+    border-radius: 2px;
+  }
+  .path-name {
+    font-size: 18px; font-weight: 600; color: var(--text);
+  }
+  .path-detail {
+    font-size: 15px; font-weight: 400; color: var(--text2);
+    line-height: 1.4;
+  }
+  .path-detail .code { font-family: var(--mono); color: var(--text); font-weight: 500; font-size: 14px; }
+  /* === 三个硬条件 === */
+  .cond-row {
+    display: flex; align-items: stretch;
+    border-top: 1px solid var(--rule2);
+    padding: 12px 0;
+  }
+  .cond-row:first-child { border-top: 2px solid var(--text); }
+  .cond-row:last-child { border-bottom: 2px solid var(--text); }
+  .cond-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    font-family: var(--mono); font-size: 16px; font-weight: 700;
+    margin-right: 16px; flex-shrink: 0; align-self: center;
+  }
+  .cond-body { flex: 1; min-width: 0; }
+  .cond-title {
+    font-size: 22px; font-weight: 600; color: var(--text);
+    margin-bottom: 2px;
+  }
+  .cond-title .code { font-family: var(--mono); color: var(--accent); font-weight: 600; font-size: 18px; }
+  .cond-detail {
+    font-size: 17px; font-weight: 400; color: var(--text2);
+    line-height: 1.4;
+  }
+  /* === 9 组件 ref-table === */
+  .ref-table {
+    width: 100%; border-collapse: collapse; table-layout: fixed;
+  }
+  .ref-table th {
+    font-size: 14px; font-weight: 500; color: var(--text3);
+    letter-spacing: 0.06em; text-align: left;
+    padding: 6px 0 8px; border-bottom: 2px solid var(--text);
+  }
+  .ref-table td {
+    font-size: 16px; padding: 7px 0;
+    border-bottom: 1px solid var(--rule2);
+    color: var(--text2); line-height: 1.35;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td.idx {
+    font-family: var(--mono); color: var(--accent); font-weight: 600;
+  }
+  .ref-table td.skill {
+    font-family: var(--mono); color: var(--text); font-weight: 500;
+  }
+  /* === 底部断言 === */
+  .footer-claim {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 2px solid var(--text);
+  }
+  .footer-claim .line1 {
+    font-size: 20px; font-weight: 600; color: var(--text);
+    line-height: 1.45; margin-bottom: 4px;
+  }
+  .footer-claim .line1 .accent { color: var(--accent); }
+  .footer-claim .line2 {
+    font-size: 15px; font-weight: 400; color: var(--text2);
+    line-height: 1.5;
+  }
+  /* === 右下品牌 === */
+  .footer {
+    margin-top: auto; display: flex; justify-content: flex-end;
+    padding-top: 12px;
+  }
+  .footer-mark { display: flex; align-items: center; gap: 8px; }
+  .footer-mark .sq { width: 6px; height: 6px; background: var(--accent); }
+  .footer-mark .txt {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.08em;
+  }
+  .gap-sm { margin-top: 10px; }
+  .gap-md { margin-top: 16px; }
+  .gap-lg { margin-top: 22px; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <div class="r2-label">C2RTL · 拆 C 代码 → 验证过的 Verilog</div>
+
+  <h1 class="title-main">C2RTL：<span class="accent">错题驱动</span>迭代，编译可信赖的 Verilog</h1>
+  <p class="subtitle">C 代码进去，验证过的 Verilog 出来。<span class="accent">小模块穷举，大模块形式化等价验证</span>。</p>
+
+  <div class="rule-accent"></div>
+
+  <!-- 三条路径 -->
+  <div class="section-label">THREE PATHS · 三条路径（同一验证框架 + 同一经验池）</div>
+  <div class="paths">
+    <div class="path">
+      <div class="path-head"><span class="path-tag">A</span><span class="path-name">主路 · AI 直写</span></div>
+      <div class="path-detail">数据通路 / 位操作 / 小型 FSM / 精度敏感。LLM 直接生成 + 商用 EDA 验证 + 错题闭环</div>
+    </div>
+    <div class="path">
+      <div class="path-head"><span class="path-tag">B</span><span class="path-name">HLS 直编</span></div>
+      <div class="path-detail">HLS 兼容的 C（pragma / 有界循环 / 规范接口）→ Catapult / Vivado HLS 编译</div>
+    </div>
+    <div class="path">
+      <div class="path-head"><span class="path-tag">C</span><span class="path-name">重构 + HLS</span></div>
+      <div class="path-detail">LLM 把不可综合 C 重构为 HLS 兼容 → HLS 编译 → LLM 分析 PPA 调优</div>
+    </div>
+  </div>
+
+  <!-- 三个硬条件 -->
+  <div class="gap-lg">
+    <div class="section-label">THREE HARD CONDITIONS · 三个硬条件</div>
+    <div>
+      <div class="cond-row">
+        <div class="cond-num">1</div>
+        <div class="cond-body">
+          <div class="cond-title">必须有干净的 <span class="code">C 参考模型</span></div>
+          <div class="cond-detail">三道体检门：<span class="code">G1</span> 导入 Golden · <span class="code">G2</span> UBSan 动态 · <span class="code">G3</span> CBMC 静态全路径推导</div>
+        </div>
+      </div>
+      <div class="cond-row">
+        <div class="cond-num">2</div>
+        <div class="cond-body">
+          <div class="cond-title">必须拆到<span class="code">单函数</span>粒度</div>
+          <div class="cond-detail">Clang AST 分析函数依赖 → 拓扑序 → 叶子先穷举，顶层最后（成功率从近 100% 到明显下降的分界在 1000 行）</div>
+        </div>
+      </div>
+      <div class="cond-row">
+        <div class="cond-num">3</div>
+        <div class="cond-body">
+          <div class="cond-title">反馈必须<span class="code">精确</span></div>
+          <div class="cond-detail">错误定位器（信号+行号） + 诊断压缩器（几百行 → 20 行） + 独立 Sub-agent 隔离上下文</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 核心组件 -->
+  <div class="gap-md">
+    <div class="section-label">9 COMPONENTS · 九个核心组件（自研壁垒）</div>
+    <table class="ref-table">
+      <colgroup>
+        <col style="width: 8%"><col style="width: 30%"><col style="width: 62%">
+      </colgroup>
+      <thead>
+        <tr><th>#</th><th>组件</th><th>职责</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="idx">1</td><td class="skill">AST 分解器</td><td>拆函数 · 排拓扑序 · 分配路径</td></tr>
+        <tr><td class="idx">2</td><td class="skill">Prompt 引擎</td><td>构建生成 Prompt + 修复 Prompt</td></tr>
+        <tr><td class="idx">3</td><td class="skill">EDA 桥接层</td><td>商用 EDA 输出 → 结构化 JSON</td></tr>
+        <tr><td class="idx">4</td><td class="skill">错误定位器</td><td>定位到模块 · 信号 · 行号</td></tr>
+        <tr><td class="idx">5</td><td class="skill">诊断压缩器</td><td>几百行诊断 → 20 行内</td></tr>
+        <tr><td class="idx">6</td><td class="skill">CEGIS 主控循环</td><td>生成 · 验证 · 修复 全流程串联</td></tr>
+        <tr><td class="idx">7</td><td class="skill">已验证模块库</td><td>跨设计复用（如 countLeadingZeros16）</td></tr>
+        <tr><td class="idx">8</td><td class="skill">错题模式库</td><td>KG 注入 prompt 提升首次质量</td></tr>
+        <tr><td class="idx">9</td><td class="skill">主控流水线</td><td>配置管理 · 硬终止 · fallback 策略</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 底部断言 -->
+  <div class="footer-claim">
+    <div class="line1">C 代码是 ground truth。<span class="accent">穷举和形式化等价验证</span>是正确性的最终裁判。</div>
+    <div class="line2">经验积累三层 = 已验证模块复用 + 错题模式注入 + 调试策略检索，迭代轮数减半再减半</div>
+  </div>
+
+  <!-- 右下品牌 -->
+  <div class="footer">
+    <div class="footer-mark">
+      <span class="sq"></span>
+      <span class="txt">R2芯片智能体</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

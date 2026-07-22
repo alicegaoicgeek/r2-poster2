@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2-24H PPA · 24h 交付一个工业级 IP：跑通 PPA 优化</title>
+<style>
+:root{
+  --bg:#F7F4EF; --ink:#1D1D1F; --accent:#E8501F;
+  --warm-1:#F0ECDF; --warm-2:#E8E3D6;
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','PingFang SC','Noto Sans SC',sans-serif;
+  --mono:'SF Mono','JetBrains Mono',monospace;
+  --bd:rgba(29,29,31,.08); --bd-m:rgba(29,29,31,.14); --bd-s:rgba(29,29,31,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+body{background:var(--bg);font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:'tnum' 1;line-height:1.5}
+
+/* === SLIDE === */
+.slide{width:1080px;min-height:1440px;margin:0 auto;background:var(--bg);position:relative;display:flex;flex-direction:column;scroll-snap-align:start;border-bottom:1px solid var(--bd);overflow:hidden}
+
+/* === RULER === */
+.ruler{height:6px;display:flex;flex-shrink:0}
+.ruler .o{width:120px;background:var(--accent)}
+.ruler .k{flex:1;background:var(--ink)}
+
+/* === HEADER === */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 48px 6px;flex-shrink:0}
+.hdr .tag{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)}
+.hdr .tag .sep{color:var(--ink);opacity:.25;margin:0 6px}
+.hdr .pg{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1px;color:var(--ink);opacity:.35}
+.hdr .br{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);opacity:.45}
+
+/* === TITLE === */
+.title{padding:2px 48px 12px;font-size:30px;font-weight:600;letter-spacing:-.8px;line-height:1.2;flex-shrink:0}
+.title .r2{color:var(--accent)}
+.excerpt{padding:0 48px 16px;font-size:13px;font-weight:400;line-height:1.65;color:var(--ink);opacity:.55;flex-shrink:0;max-width:900px}
+
+/* === BODY === */
+.body{flex:1;padding:0 48px;display:flex;flex-direction:column;gap:14px}
+
+/* === FOOTER === */
+.ftr{display:flex;justify-content:space-between;align-items:center;padding:14px 48px;border-top:1px solid var(--bd);flex-shrink:0}
+.ftr .bt{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);opacity:.32}
+.ftr .bt .dot{margin:0 7px;opacity:.5}
+
+/* === GRID === */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd-m);border:1px solid var(--bd-m)}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--bd-m);border:1px solid var(--bd-m)}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--bd-m);border:1px solid var(--bd-m)}
+.gcell{background:var(--bg);padding:16px 18px}
+.gcell.warm{background:var(--warm-1)}
+.gcell.dark{background:var(--ink);color:var(--bg)}
+
+/* === CARD === */
+.card{background:var(--warm-1);padding:16px 18px;border:1px solid var(--bd)}
+.card.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card.plain{background:var(--bg);border:1px solid var(--bd-m)}
+
+/* === LABEL === */
+.label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.label.sub{color:var(--ink);opacity:.4;margin-top:10px;margin-bottom:4px}
+
+/* === HEADINGS === */
+.cell-h{font-size:15px;font-weight:600;letter-spacing:-.3px;margin-bottom:8px;line-height:1.3}
+.sec-h{font-size:16px;font-weight:600;letter-spacing:-.3px;margin-bottom:6px;display:flex;align-items:baseline;gap:8px}
+.sec-h .nn{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:1px}
+
+/* === TEXT === */
+.para{font-size:13.5px;line-height:1.7;color:var(--ink);opacity:.88}
+.para.sm{font-size:12.5px;line-height:1.65}
+.para.on-dark{color:var(--bg);opacity:.85}
+.accent{color:var(--accent);font-weight:500}
+.mono{font-family:var(--mono);font-feature-settings:'tnum' 1}
+
+/* === LISTS === */
+.dash{list-style:none}
+.dash li{position:relative;padding-left:15px;padding-top:3px;padding-bottom:3px;font-size:13px;line-height:1.55}
+.dash li::before{content:'—';position:absolute;left:0;color:var(--accent);font-weight:600}
+.dash.sm li{font-size:12px;padding-top:2px;padding-bottom:2px;line-height:1.5}
+.dash.on-dark li{color:var(--bg);opacity:.85}
+.dash.on-dark li::before{color:var(--accent)}
+
+.nlist{list-style:none}
+.nlist li{display:flex;gap:10px;padding:5px 0;font-size:13px;line-height:1.55;border-bottom:1px solid var(--bd-s)}
+.nlist li:last-child{border-bottom:none}
+.nlist .n{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);min-width:22px;padding-top:1px;flex-shrink:0}
+.nlist.sm li{font-size:12px;padding:3px 0;line-height:1.5}
+.nlist.sm .n{font-size:10px;min-width:20px}
+
+/* === TABLE === */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{background:var(--ink);color:var(--bg);font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;text-align:left;padding:7px 10px}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--bd);line-height:1.5}
+.tbl tr:nth-child(even) td{background:var(--warm-1)}
+.tbl .nc{font-family:var(--mono);color:var(--accent);font-weight:600;font-size:11px}
+
+/* === FLOW BAR === */
+.flow{display:flex;align-items:stretch;background:var(--ink);color:var(--bg)}
+.flow .fs{flex:1;padding:10px 8px;font-size:11px;font-weight:500;text-align:center;border-right:1px solid rgba(247,244,239,.12);display:flex;flex-direction:column;justify-content:center}
+.flow .fs:last-child{border-right:none}
+.flow .fs .fn{font-family:var(--mono);font-size:9px;color:var(--accent);display:block;margin-bottom:3px;letter-spacing:.5px}
+.flow .fa{display:flex;align-items:center;padding:0 2px;color:rgba(247,244,239,.25);font-size:9px}
+
+/* === RULES BAR === */
+.rules{display:flex;border:1px solid var(--bd-m)}
+.rules .ri{flex:1;padding:9px 8px;font-size:11.5px;font-weight:500;text-align:center;border-right:1px solid var(--bd)}
+.rules .ri:last-child{border-right:none}
+.rules .ri .rl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+
+/* === SEC NAV === */
+.secnav{display:flex;gap:0;padding:0 48px 14px;flex-shrink:0;flex-wrap:wrap}
+.secnav .ni{font-size:10.5px;font-weight:500;letter-spacing:.3px;color:var(--ink);opacity:.45;padding:4px 9px;border:1px solid var(--bd);margin-right:-1px}
+.secnav .ni .nn{font-family:var(--mono);color:var(--accent);font-weight:600;margin-right:4px}
+
+/* === CALLOUT === */
+.callout{background:var(--ink);color:var(--bg);padding:16px 18px}
+.callout .label{color:var(--accent)}
+.callout .para{color:var(--bg);opacity:.88}
+
+/* === MISC === */
+.divider{height:1px;background:var(--bd-m);margin:2px 0}
+.kv{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.5}
+.kv .k{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:600;min-width:20px}
+.stat-row{display:flex;gap:1px;background:var(--bd-m)}
+.stat-row .si{flex:1;background:var(--ink);color:var(--bg);padding:10px 12px;text-align:center}
+.stat-row .si .sv{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);letter-spacing:-.5px}
+.stat-row .si .sl{font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;opacity:.6;margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- ====== PAGE 1: PANORAMA ====== -->
+<section class="slide" id="p01">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-24H PPA<span class="sep">·</span>INDUSTRIAL IP</div>
+  <div class="pg">01 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>24h 交付一个工业级 IP：跑通 PPA 优化</h1>
+<div class="secnav">
+  <span class="ni"><span class="nn">一</span>课的位置</span>
+  <span class="ni"><span class="nn">二</span>建成LOOP</span>
+  <span class="ni"><span class="nn">三</span>诊断三三制</span>
+  <span class="ni"><span class="nn">四</span>改进定义</span>
+  <span class="ni"><span class="nn">五</span>运行时</span>
+  <span class="ni"><span class="nn">六</span>沉淀</span>
+  <span class="ni"><span class="nn">七</span>第一圈与迁移</span>
+</div>
+<div class="body">
+  <div class="g3">
+    <!-- Cell 1 -->
+    <div class="gcell warm">
+      <div class="label">PREREQUISITES</div>
+      <div class="cell-h">签出在前，PPA loop 在后</div>
+      <ul class="dash sm">
+        <li>功能门禁是前提，本课主线是优化 loop 怎么转</li>
+        <li>控制微序列器：约四千行 RTL、约一万六触发器</li>
+        <li>含预取、译码、标志更新及跨域控制耦合</li>
+        <li>深水区：关键路径锥、控制扇出、晚选择与长组合结构</li>
+        <li>缺稳定版本或基线三数，禁止启动 loop</li>
+      </ul>
+    </div>
+    <!-- Cell 2 -->
+    <div class="gcell">
+      <div class="label">LOOP STRUCTURE</div>
+      <div class="cell-h">PPA 先建成 loop</div>
+      <ol class="nlist sm">
+        <li><span class="n">01</span>读 INDEX，接上失败策略与当前最优</li>
+        <li><span class="n">02</span>诊断 critical path，把慢写成根因</li>
+        <li><span class="n">03</span>按根因做三三制，并行三个策略家族</li>
+        <li><span class="n">04</span>综合后跑对拍或 equiv_check，失败直接丢、原因入库</li>
+        <li><span class="n">05</span>对通过者相对锁定基线算 score</li>
+        <li><span class="n">06</span>写回 INDEX 后再开下一圈</li>
+        <li><span class="n">07</span>计数触达阈值换挡；达标停表人签</li>
+      </ol>
+    </div>
+    <!-- Cell 3 -->
+    <div class="gcell warm">
+      <div class="label">SCORING</div>
+      <div class="cell-h">固定原点上的可复算比较</div>
+      <ul class="dash sm">
+        <li>基线：WNS / TNS / Area（锁定，禁止改写）</li>
+        <li>系数：<span class="mono">0.5 / 0.35 / 0.15</span></li>
+        <li>面积相对基线恶化超过 10%：额外加 0.5 惩罚</li>
+        <li>越小越好</li>
+        <li>示意：基线 WNS −0.50、候选 −0.20</li>
+      </ul>
+    </div>
+    <!-- Cell 4 -->
+    <div class="gcell">
+      <div class="label">3×3 STRATEGY</div>
+      <div class="cell-h">同一根因并行三个不同策略家族</div>
+      <ul class="dash sm">
+        <li>扇出类 → 寄存器复制或局部缓冲</li>
+        <li>组合过深 → 切割与分段寄存</li>
+        <li>晚选择 → 选择前移或晚绑定</li>
+        <li>长表达式 → 拆中间量与公共子表达式</li>
+        <li>同家族参数变体不计入三路</li>
+      </ul>
+    </div>
+    <!-- Cell 5 -->
+    <div class="gcell warm">
+      <div class="label">RUNTIME</div>
+      <div class="cell-h">继续、换挡、停车与可见性</div>
+      <ul class="dash sm">
+        <li>继续：未达上限/目标/未触发切换</li>
+        <li>换挡：计数触达阈值</li>
+        <li>回退：系统性回归→上一稳定 major</li>
+        <li>停车：版本上限/整圈无提升/GOAL 达成</li>
+        <li>看板：score · 无改善计数 · 门禁失败率 · 策略家族多样性</li>
+        <li>版本上限默认 v10</li>
+      </ul>
+    </div>
+    <!-- Cell 6 -->
+    <div class="gcell">
+      <div class="label">COMPLETION</div>
+      <div class="cell-h">五条同时满足才算跑通</div>
+      <ul class="dash sm">
+        <li>合法停表条件触发</li>
+        <li>最终版本门禁通过</li>
+        <li>INDEX 自 v0 连续可审</li>
+        <li>有相对固定基线的对比说明</li>
+        <li>人已最终签核</li>
+      </ul>
+      <div class="label sub">GOAL 6 项</div>
+      <ul class="dash sm">
+        <li>等价优先 / 基线三数 / score 公式 / 版本上限 / 门禁路径 / 停表换挡条件</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="fs"><span class="fn">01</span>读 INDEX</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">02</span>诊断根因</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">03</span>三三制</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">04</span>门禁过滤</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">05</span>算 score</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">06</span>写回 INDEX</div>
+    <div class="fa">→</div>
+    <div class="fs"><span class="fn">07</span>换挡/停表</div>
+  </div>
+
+  <div class="rules">
+    <div class="ri"><span class="rl">RULE 01</span>基线不动</div>
+    <div class="ri"><span class="rl">RULE 02</span>失败入库</div>
+    <div class="ri"><span class="rl">RULE 03</span>无改善换挡</div>
+    <div class="ri"><span class="rl">RULE 04</span>人签停表</div>
+    <div class="ri"><span class="rl">RULE 05</span>尺固定回数</div>
+  </div>
+
+  <div class="callout">
+    <div class="label">ANCHOR</div>
+    <p class="para on-dark">让模型提出可能，让工具拒绝幻觉，让 INDEX 积累禁忌与最优，让人在该负责处签字。loop 转起来，PPA 才开始；loop 管起来，PPA 才结束得了。</p>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">PANORAMA</div>
+</div>
+</section>
+
+<!-- ====== PAGE 2: CHAPTER 1 ====== -->
+<section class="slide" id="p02">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 01<span class="sep">·</span>课的位置</div>
+  <div class="pg">02 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>先把课放回正确的位置</h1>
+<div class="excerpt">上一课把功能签出，这一课在已签出版本上做 PPA：把时序和面积推向更好，并且每一步可追问、可交接、可回放。</div>
+<div class="body">
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">上下游关系</div>
+      <div class="cell-h">签出在前，PPA loop 在后</div>
+      <p class="para sm">上下游关系写死——签出在前，PPA loop 在后；功能门禁是前提，本课主线是优化 loop 怎么转。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">设计对象</div>
+      <div class="cell-h">控制微序列器</div>
+      <p class="para sm">约四千行 RTL、约一万六触发器，含预取、译码、标志更新及跨域控制耦合；功能点与骨架、P0 门禁已在上一课签出，本课输入为稳定版本，以及写入 GOAL 并锁定的 WNS/TNS/Area 基线。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">深水区与 LOOP 边界</div>
+    <p class="para sm">它不是外设型 IP，而是控制耦合型设计，深水区在关键路径锥、控制扇出、晚选择与长组合结构——PPA 主 loop 只在这些点上诊断根因、按三三制加载策略出候选，经综合与对拍过滤后，相对固定基线算 score 并决定提升或换挡；不重做功能定义，不移动基线，门禁失败结果不进评分。缺稳定版本或基线三数，禁止启动 loop；没有原点，快慢对比无效。</p>
+  </div>
+
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">进入检查清单</div>
+      <div class="cell-h">每一项都必须可验证</div>
+      <p class="para sm" style="margin-bottom:8px">进入本课的检查可以做成清单，但每一项都必须可验证：</p>
+      <ul class="dash sm">
+        <li>稳定版本路径存在</li>
+        <li>上一课签出证据可定位</li>
+        <li>GOAL 中基线三数与综合报告一致</li>
+        <li>INDEX 可追加写入</li>
+        <li>策略库可按名称调用并留痕</li>
+        <li>门禁脚本可重复执行</li>
+      </ul>
+      <p class="para sm" style="margin-top:6px"><span class="accent">任一项只靠口头确认，不算通过。</span></p>
+    </div>
+    <div class="gcell dark">
+      <div class="label">SCORE 比较规则</div>
+      <div class="cell-h" style="color:var(--bg)">门禁通过集合内比较</div>
+      <p class="para sm on-dark">score 比较只在门禁通过集合内进行。三个候选若只有一个通过，就在这一个与当前最优之间比；若全部失败，本圈无 score 决策，只产出失败模式与诊断复审标记。</p>
+      <div class="divider" style="background:rgba(247,244,239,.12);margin:10px 0"></div>
+      <p class="para sm on-dark"><span class="accent">禁止</span>在失败集合里挑"看起来 WNS 更好"的版本晋升——那是最常见的退出 loop 方式。</p>
+    </div>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 01 · 课的位置</div>
+</div>
+</section>
+
+<!-- ====== PAGE 3: CHAPTER 2 ====== -->
+<section class="slide" id="p03">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 02<span class="sep">·</span>建成 LOOP</div>
+  <div class="pg">03 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>PPA 先建成 loop，否则只是改 RTL</h1>
+<div class="excerpt">PPA 要成工程，必须建成一条可重复执行的 loop，并且每一轮 loop 在 INDEX 留下可检索记录。</div>
+<div class="body">
+  <div class="card">
+    <div class="label">LOOP 七步 · 顺序固定</div>
+    <ol class="nlist sm">
+      <li><span class="n">01</span>读 INDEX，接上失败策略与当前最优</li>
+      <li><span class="n">02</span>诊断 critical path，把慢写成根因——例如组合逻辑深度过大、控制信号高扇出、FSM 输出拖长下游、晚选择或宽比较——而不是只写"路径太长"</li>
+      <li><span class="n">03</span>按根因做三三制，并行三个不同策略家族候选</li>
+      <li><span class="n">04</span>综合后跑对拍或 equiv_check，失败直接丢、原因入库</li>
+      <li><span class="n">05</span>仅对通过者相对进入本课时锁定的 WNS/TNS/Area 基线算 score，更优则提升并清零无改善计数，否则计数加一</li>
+      <li><span class="n">06</span>写回 INDEX 后再开下一圈</li>
+      <li><span class="n">07</span>计数触达阈值就换家族或回退切分边界；达到版本上限或 GOAL 目标就停表，交人最终签核</li>
+    </ol>
+  </div>
+
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">分工不能混</div>
+      <div class="cell-h">四种角色各司其职</div>
+      <table class="tbl">
+        <tr><th>角色</th><th>职责</th></tr>
+        <tr><td class="nc">模型</td><td>提出改写</td></tr>
+        <tr><td class="nc">工具</td><td>给出时序、面积与等价结果</td></tr>
+        <tr><td class="nc">INDEX</td><td>保存根因、策略、门禁结论与 score 轨迹</td></tr>
+        <tr><td class="nc">人</td><td>只在灰区抉择并在结束时签字</td></tr>
+      </table>
+      <p class="para sm" style="margin-top:8px">跳过门禁谈快慢，或移动基线制造假进步，都视为退出 loop。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">跑通 PPA 的判据</div>
+      <div class="cell-h">四个"能不能"</div>
+      <ul class="dash sm">
+        <li>固定基线还在不在</li>
+        <li>失败能不能检索</li>
+        <li>提升能不能回放</li>
+        <li>无改善会不会强制换挡</li>
+      </ul>
+      <p class="para sm" style="margin-top:8px">满足这些，优化才是 closed loop；不满足，就仍是改 RTL 的冲动。</p>
+    </div>
+  </div>
+
+  <div class="card dark">
+    <div class="label">INDEX 每一圈最小字段</div>
+    <div class="g4" style="background:rgba(247,244,239,.1);border:none;gap:1px">
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">major</span> 版本号</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">根因</span>列表</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">三候选</span>策略家族与改写点</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">门禁</span>结果与失败原因</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">WNS/TNS/Area</span> 与 score</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">决策</span>提升/计数/换挡/回退</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">无改善</span>计数</div>
+      </div>
+      <div class="gcell dark" style="background:transparent;padding:8px 10px">
+        <div class="para sm on-dark"><span class="mono accent">时间戳</span></div>
+      </div>
+    </div>
+    <p class="para sm on-dark" style="margin-top:10px">缺失败原因的 FAIL 记录，下一圈无法避坑；缺策略名的提升，无法复盘是哪条路生效。</p>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 02 · 建成 LOOP</div>
+</div>
+</section>
+
+<!-- ====== PAGE 4: CHAPTER 3A — DIAGNOSIS ====== -->
+<section class="slide" id="p04">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 03<span class="sep">·</span>诊断（上）</div>
+  <div class="pg">04 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>诊断与三三制：有信息量的候选从哪里来</h1>
+<div class="excerpt">loop 的第一推动是诊断。从 timing 报告取出十条到二十五条关键路径，把慢写成可匹配策略的根因。</div>
+<div class="body">
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">诊断流程</div>
+      <div class="cell-h">把慢写成可匹配策略的根因</div>
+      <p class="para sm">loop 的第一推动是诊断。从 timing 报告取出十条到二十五条关键路径，把慢写成可匹配策略的根因。根因写清，三路并行才有分工；根因只写"不够快"，三路容易变成同一改法的三种参数。</p>
+      <p class="para sm" style="margin-top:8px">诊断结果与根因—策略对应写入 INDEX；连续两圈根因不变且 score 无提升，先复审诊断。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">路径数量</div>
+      <div class="cell-h">10–25 条关键路径</div>
+      <div class="stat-row" style="margin-bottom:10px">
+        <div class="si"><div class="sv">10</div><div class="sl">下限</div></div>
+        <div class="si"><div class="sv">25</div><div class="sl">上限</div></div>
+      </div>
+      <p class="para sm">太少易盲，太多易散。根因写清，三路并行才有分工；根因只写"不够快"，三路容易变成同一改法的三种参数。</p>
+    </div>
+  </div>
+
+  <div class="label" style="margin-bottom:8px">六种根因分类</div>
+  <div class="g3">
+    <div class="gcell warm">
+      <div class="sec-h"><span class="nn">01</span>组合逻辑深度过大</div>
+      <p class="para sm">组合层级过深，关键路径锥过长</p>
+    </div>
+    <div class="gcell">
+      <div class="sec-h"><span class="nn">02</span>控制信号高扇出</div>
+      <p class="para sm">控制扇出过大，驱动路径变长</p>
+    </div>
+    <div class="gcell warm">
+      <div class="sec-h"><span class="nn">03</span>标志更新锥过深</div>
+      <p class="para sm">标志更新路径锥体过大</p>
+    </div>
+    <div class="gcell">
+      <div class="sec-h"><span class="nn">04</span>选择信号过晚参与运算</div>
+      <p class="para sm">晚选择导致关键路径无法缩短</p>
+    </div>
+    <div class="gcell warm">
+      <div class="sec-h"><span class="nn">05</span>长表达式可拆分</div>
+      <p class="para sm">长组合表达式可拆为中间量</p>
+    </div>
+    <div class="gcell">
+      <div class="sec-h"><span class="nn">06</span>FSM 输出拖长下游</div>
+      <p class="para sm">FSM 输出直接驱动长组合路径</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="label">反模式警告</div>
+    <p class="para on-dark sm">根因只写"不够快"，三路容易变成同一改法的三种参数。诊断结果与根因—策略对应写入 INDEX；连续两圈根因不变且 score 无提升，先复审诊断。</p>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 03 · 诊断（上）</div>
+</div>
+</section>
+
+<!-- ====== PAGE 5: CHAPTER 3B — 3×3 STRATEGY ====== -->
+<section class="slide" id="p05">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 03<span class="sep">·</span>三三制（下）</div>
+  <div class="pg">05 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>三三制：同一根因并行三个不同策略家族</h1>
+<div class="excerpt">同一根因并行三个不同策略家族（扇出、切割、重构），统一综合与门禁，按 score 排序综合，形成下一圈问题再开三路。</div>
+<div class="body">
+  <div class="card">
+    <div class="label">根因 → 策略家族对应表</div>
+    <table class="tbl">
+      <tr><th>根因类型</th><th>优先策略家族</th><th>说明</th></tr>
+      <tr><td class="nc">扇出类</td><td>寄存器复制或局部缓冲</td><td>降低扇出驱动的路径延迟</td></tr>
+      <tr><td class="nc">组合过深</td><td>切割与分段寄存</td><td>打断长组合链，插入流水</td></tr>
+      <tr><td class="nc">晚选择</td><td>选择前移或晚绑定</td><td>提前选择信号或延后绑定</td></tr>
+      <tr><td class="nc">长表达式</td><td>拆中间量与公共子表达式</td><td>提取公共项，减少重复计算</td></tr>
+    </table>
+    <p class="para sm" style="margin-top:8px">对应关系不是教条，但必须写进当圈 INDEX，换挡时才知道试过哪一科。<span class="accent">同家族参数变体不计入三路。</span></p>
+  </div>
+
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">两组护栏</div>
+      <div class="cell-h">目标只有一个</div>
+      <p class="para sm" style="margin-bottom:8px">目标只有一个：相对锁定基线的 score 改进。</p>
+      <ul class="dash sm">
+        <li><span class="accent">护栏一：</span>门禁失败不得评分</li>
+        <li><span class="accent">护栏二：</span>基线不得移动，失败必须入库</li>
+      </ul>
+      <p class="para sm" style="margin-top:8px">生成可以快，错误不能漏。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">顺序固定</div>
+      <div class="cell-h">五步循环</div>
+      <div class="flow" style="margin-bottom:8px">
+        <div class="fs"><span class="fn">01</span>诊断</div>
+        <div class="fa">→</div>
+        <div class="fs"><span class="fn">02</span>三路取样</div>
+        <div class="fa">→</div>
+        <div class="fs"><span class="fn">03</span>门禁计分</div>
+        <div class="fa">→</div>
+        <div class="fs"><span class="fn">04</span>复盘沉淀</div>
+        <div class="fa">→</div>
+        <div class="fs"><span class="fn">05</span>新问题再 loop</div>
+      </div>
+      <p class="para sm">对着当前根因把本圈做透，提升或确认失败后立刻复盘，把有效手法写入 INDEX/Skill；拖到事后，沉淀质量会明显下降。策略家族与根因的对应要事先可查，避免临场拍脑袋。</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="label">三三制执行要点</div>
+    <p class="para on-dark sm">三三制在 loop 里这样用：同一根因并行三个不同策略家族（扇出、切割、重构），统一综合与门禁，按 score 排序综合，形成下一圈问题再开三路。门禁与 score 能自动则自动；灰区才人工，口径事先写进 GOAL。</p>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 03 · 三三制（下）</div>
+</div>
+</section>
+
+<!-- ====== PAGE 6: CHAPTER 4 — SCORING ====== -->
+<section class="slide" id="p06">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 04<span class="sep">·</span>改进定义</div>
+  <div class="pg">06 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>什么叫改进：固定原点上的可复算比较</h1>
+<div class="excerpt">比较必须锚定进入本课时锁定的 baseline，而不是锚定"上一圈我最喜欢的结果"。</div>
+<div class="body">
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">固定原点</div>
+      <div class="cell-h">基线锁定，禁止改写</div>
+      <p class="para sm">过滤之后才有比较，比较必须锚定进入本课时锁定的 baseline，而不是锚定"上一圈我最喜欢的结果"，否则分数会在移动靶上自我庆祝，团队也会在自我庆祝里失去对真实进展的感觉。</p>
+      <p class="para sm" style="margin-top:8px">尺在进 loop 时钉死：基线 WNS、TNS、Area 来自第一版签出综合，之后<span class="accent">禁止改写</span>。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">改进的唯一合法含义</div>
+      <div class="cell-h">先过门禁，再在固定原点上得更好 score</div>
+      <p class="para sm">先过门禁，再在固定原点上得到更好的 score，然后才配提升为新的 major 版本。看起来更快却过不了等价，不是改进；只对内轮自嗨、却说不清相对签出点如何，也不是改进。</p>
+      <p class="para sm" style="margin-top:8px">三三制给出的多个候选，在 PPA loop 里并不直接"谁看起来快谁上"，而是先过等价/对拍，再在同一把尺子上比。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">SCORE 公式</div>
+    <div class="cell-h">比较量定义为越小越好的 score</div>
+    <table class="tbl">
+      <tr><th>分项</th><th>归一方式</th><th>系数</th><th>说明</th></tr>
+      <tr><td class="nc">WNS</td><td>基线减当前、再除以基线绝对值</td><td class="nc">0.5</td><td>最坏路径时序</td></tr>
+      <tr><td class="nc">TNS</td><td>同上</td><td class="nc">0.35</td><td>整体违例</td></tr>
+      <tr><td class="nc">Area</td><td>相对基线的增量比例</td><td class="nc">0.15</td><td>面积变化</td></tr>
+    </table>
+    <p class="para sm" style="margin-top:8px">计算时符号方向必须事先写死——改善对应更低 score——避免在 WNS 为负的习惯下把方向算反。面积相对基线恶化超过 10% 时，额外加 <span class="mono accent">0.5</span> 的惩罚项，否则惩罚为 0；基线绝对值过小则该分项按 0 处理，避免除零。</p>
+  </div>
+
+  <div class="g2">
+    <div class="gcell dark">
+      <div class="label">示意计算</div>
+      <p class="para sm on-dark">基线 WNS −0.50、候选 −0.20，时序归一为 −0.60；若 TNS 归一 −0.40、面积归一 0.05，加权后约 <span class="mono accent">−0.43</span>。</p>
+      <p class="para sm on-dark" style="margin-top:6px">面积一旦跨过 10% 阈值，惩罚会抵消部分时序收益，避免用面积换数字。</p>
+    </div>
+    <div class="gcell warm">
+      <div class="label">可重放性</div>
+      <div class="cell-h">loop 与手艺的差别</div>
+      <p class="para sm">loop与手艺的差别在于能否重放：谁被提升、谁被丢弃、谁因面积惩罚被压下，都应能在 INDEX 里回放。</p>
+      <p class="para sm" style="margin-top:6px"><span class="accent">尺固定，争论才能回到数上；尺随情绪移动，经验只能变成传说，不能变成原则。</span></p>
+    </div>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 04 · 改进定义</div>
+</div>
+</section>
+
+<!-- ====== PAGE 7: CHAPTER 5 — RUNTIME ====== -->
+<section class="slide" id="p07">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 05<span class="sep">·</span>运行时</div>
+  <div class="pg">07 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>运行时：继续、换挡、停车与可见性</h1>
+<div class="excerpt">loop一旦转动，管理问题往往比生成问题更致命：生成可重来，管理失灵会污染记忆链。</div>
+<div class="body">
+  <div class="g4">
+    <div class="gcell warm">
+      <div class="label">STATE 01</div>
+      <div class="cell-h">继续</div>
+      <p class="para sm">未达版本上限、未达目标、未触发切换，就继续。候选过门禁但未超过当前最优，无改善计数加一。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">STATE 02</div>
+      <div class="cell-h">换挡</div>
+      <p class="para sm">计数触达阈值，换策略家族或回退切分边界。禁止同一家族靠加试次冒充进展。</p>
+    </div>
+    <div class="gcell warm">
+      <div class="label">STATE 03</div>
+      <div class="cell-h">回退</div>
+      <p class="para sm">系统性回归，先回上一稳定 major。回退时从该版的计数与最优指针恢复，不凭记忆口头回退。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">STATE 04</div>
+      <div class="cell-h">停车</div>
+      <p class="para sm">版本上限、整圈无提升、GOAL 达成。停表后必须人签核。日常转 loop 可以自动，停表不能无人负责。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">看板 · 盯四个数</div>
+    <div class="stat-row">
+      <div class="si"><div class="sv">SCORE</div><div class="sl">当前最优</div></div>
+      <div class="si"><div class="sv">CNT</div><div class="sl">无改善计数</div></div>
+      <div class="si"><div class="sv">FAIL%</div><div class="sl">本圈门禁失败率</div></div>
+      <div class="si"><div class="sv">FAM</div><div class="sl">策略家族多样性</div></div>
+    </div>
+    <p class="para sm" style="margin-top:10px">失败率陡增，先查诊断与改写幅度，不先放宽门禁；家族集合不增长而轮次空涨，说明三三制名存实亡；计数到顶仍不换挡，说明管理失灵。没有切换条件的搜索会在局部最优自我说服；没有失败分类会把"功能改坏"与"方向试尽"混为一谈。</p>
+  </div>
+
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">异常处理 · 三类</div>
+      <table class="tbl">
+        <tr><th>异常</th><th>处理</th></tr>
+        <tr><td class="nc">三候选全失败</td><td>回到诊断并缩小改写幅度，不降门禁</td></tr>
+        <tr><td class="nc">频繁触面积惩罚</td><td>检查是否用面积换时序并换家族</td></tr>
+        <tr><td class="nc">INDEX 与 RTL 不一致</td><td>以可复现门禁结果为准，先停止 loop 修记录</td></tr>
+      </table>
+      <p class="para sm" style="margin-top:8px"><span class="accent">宁可停止 loop，不污记忆。</span></p>
+    </div>
+    <div class="gcell">
+      <div class="label">版本管理</div>
+      <div class="cell-h">上限与计数</div>
+      <ul class="dash sm">
+        <li>版本上限默认到 <span class="mono">v10</span>，或 GOAL 另写</li>
+        <li>一个 major 轮次无提升即可停</li>
+        <li>工程上可并行使用连续多圈无改善强制换挡</li>
+        <li>两者都要在 GOAL 声明</li>
+        <li>提升 major 时无改善计数归零</li>
+        <li>回退到稳定版时，从该版计数与最优指针恢复</li>
+      </ul>
+      <p class="para sm" style="margin-top:6px">避免执行到一半争论停不停。</p>
+    </div>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 05 · 运行时</div>
+</div>
+</section>
+
+<!-- ====== PAGE 8: CHAPTER 6 + 7A ====== -->
+<section class="slide" id="p08">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 06+07<span class="sep">·</span>沉淀与第一圈</div>
+  <div class="pg">08 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>沉淀：Loop 真正留下的资产 · 第一圈怎么跑通</h1>
+<div class="excerpt">失败不入库，资产为零。数字是收成，记录是土壤。第一圈只追求闭合。</div>
+<div class="body">
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">沉淀 · 第六章</div>
+      <div class="cell-h">INDEX 每圈至少增加</div>
+      <ul class="dash sm">
+        <li>根因</li>
+        <li>三策略名</li>
+        <li>门禁结果与失败原因</li>
+        <li>score</li>
+        <li>决策</li>
+        <li>无改善计数</li>
+      </ul>
+      <p class="para sm" style="margin-top:8px">多圈之后，还应有相对 baseline 的 score 轨迹，以及"某策略家族在某类根因上无效"的<span class="accent">负样本地图</span>。控制微序列器路径密集，人脑记不住禁忌；策略名会引诱重复同一种错误。失败不入库，资产为零。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">考核与沉淀</div>
+      <div class="cell-h">数字是收成，记录是土壤</div>
+      <p class="para sm">考核若只奖数字、不奖失败入库，loop 会幻觉：挪原点、藏失败。数字是收成，记录是土壤。禁忌可检索、最优可回滚、争论能指回证据，才是复利。PPA 里稀缺的往往不是更强生成，而是失败可检索；失败显形，学费才降下来。</p>
+      <p class="para sm" style="margin-top:6px">有效手法在提升或确认失败后立刻写入 INDEX/Skill，不要拖到事后。Skill 沉淀的是"某根因 → 某家族 → 门禁与 score 结果"，不是空口号。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">第一圈怎么跑通 · 第七章</div>
+    <div class="cell-h">第一圈只追求闭合</div>
+    <ol class="nlist sm">
+      <li><span class="n">01</span>核对稳定版本与基线三数，写入 GOAL（含公式符号与版本上限）</li>
+      <li><span class="n">02</span>建立 INDEX v0，当前最优=签出版本，无改善计数=0</li>
+      <li><span class="n">03</span>跑 timing，写合格根因</li>
+      <li><span class="n">04</span>按根因开三路候选</li>
+      <li><span class="n">05</span>同一门禁脚本跑完</li>
+      <li><span class="n">06</span>对 PASS 算 score</li>
+      <li><span class="n">07</span>决定提升或计数</li>
+      <li><span class="n">08</span>整行写入 INDEX</li>
+    </ol>
+    <p class="para sm" style="margin-top:8px">结束时团队必须能指着记录说：试了什么、打死了什么、相对原点如何、下一圈禁止什么。指不出来，loop 未接通。<span class="accent">第一圈通了，才有资格谈百分比；第一圈不通，百分比只是噪音。</span></p>
+  </div>
+
+  <div class="g4">
+    <div class="gcell dark">
+      <div class="label">FAIL 01</div>
+      <p class="para sm on-dark">根因写太粗</p>
+    </div>
+    <div class="gcell dark">
+      <div class="label">FAIL 02</div>
+      <p class="para sm on-dark">三路实为一路</p>
+    </div>
+    <div class="gcell dark">
+      <div class="label">FAIL 03</div>
+      <p class="para sm on-dark">门禁脚本中途更换</p>
+    </div>
+    <div class="gcell dark">
+      <div class="label">FAIL 04</div>
+      <p class="para sm on-dark">基线被改成上一候选</p>
+    </div>
+  </div>
+  <p class="para sm" style="padding:0 4px">这四类在启动 loop 检查里就要挡掉：根因必须落到可匹配家族；三路家族名不同；门禁命令与报告路径写死在 GOAL；基线三数只写一次。从微序列器这类控制核的经验看，PPA loop 前几圈的价值多半不在大涨百分比，而在快速排除无效家族——排除本身就是进展，前提是排除被写进 INDEX。</p>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 06+07 · 沉淀与第一圈</div>
+</div>
+</section>
+
+<!-- ====== PAGE 9: CHAPTER 7B — MIGRATION & COMPLETION ====== -->
+<section class="slide" id="p09">
+<div class="ruler"><div class="o"></div><div class="k"></div></div>
+<div class="hdr">
+  <div class="tag">R2-CHAPTER 07<span class="sep">·</span>迁移与完成判据</div>
+  <div class="pg">09 / 09</div>
+  <div class="br">R2芯片智能体</div>
+</div>
+<h1 class="title"><span class="r2">R2-</span>第一圈到第三圈 · 方法怎么迁走 · 完成判据</h1>
+<div class="excerpt">第一圈到第三圈的管理重点是：诊断是否越写越具体，三路是否真不同，失败是否可分类，基线是否仍固定。</div>
+<div class="body">
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">前几圈管理重点</div>
+      <div class="cell-h">把 loop 的卫生做干净</div>
+      <ul class="dash sm">
+        <li>诊断是否越写越具体</li>
+        <li>三路是否真不同</li>
+        <li>失败是否可分类</li>
+        <li>基线是否仍固定</li>
+      </ul>
+      <p class="para sm" style="margin-top:8px">百分比是后几圈的话题；前几圈把 loop 的卫生做干净，后面的百分比才有讨论资格。</p>
+      <p class="para sm" style="margin-top:6px">第二圈起每次先读 INDEX，加载负样本与最优指针，再诊断与三路取样。评估始终对同一基线，不把基线挪到"上一圈最优"。圈数增加后，看 score 轨迹与无改善计数，比开会争论"再试试"干净。</p>
+    </div>
+    <div class="gcell">
+      <div class="label">迁移管法</div>
+      <div class="cell-h">换控制型 IP 时</div>
+      <ul class="dash sm">
+        <li>固定原点</li>
+        <li>先工具后分数</li>
+        <li>三路取样</li>
+        <li>失败入库</li>
+        <li>计数换挡</li>
+        <li>人签停表</li>
+      </ul>
+      <p class="para sm" style="margin-top:8px"><span class="accent">不迁移某次 WNS 故事。</span>功能签出是上车；能走多远取决于优化是否在约束里转、是否把记忆留下。</p>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="gcell warm">
+      <div class="label">完成判据 · 五条同时满足</div>
+      <ol class="nlist sm">
+        <li><span class="n">01</span>合法停表条件触发</li>
+        <li><span class="n">02</span>最终版本门禁通过</li>
+        <li><span class="n">03</span>INDEX 自 v0 连续可审</li>
+        <li><span class="n">04</span>有相对固定基线的对比说明</li>
+        <li><span class="n">05</span>人已最终签核</li>
+      </ol>
+      <p class="para sm" style="margin-top:6px"><span class="accent">缺一不可。</span></p>
+    </div>
+    <div class="gcell">
+      <div class="label">GOAL · 启动前至少写清六项</div>
+      <ol class="nlist sm">
+        <li><span class="n">01</span>等价优先于 PPA</li>
+        <li><span class="n">02</span>锁定的 WNS/TNS/Area 基线三数</li>
+        <li><span class="n">03</span>score 公式与符号约定</li>
+        <li><span class="n">04</span>版本上限</li>
+        <li><span class="n">05</span>门禁命令与报告路径</li>
+        <li><span class="n">06</span>停表与换挡条件</li>
+      </ol>
+      <p class="para sm" style="margin-top:6px">缺基线或缺公式，禁止进入 major v1。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">人签核要求</div>
+    <p class="para sm">最终放行前抽查至少一条 FAIL 记录是否有原因、一次提升是否可按 INDEX 复算 score、基线三数是否与 GOAL 一致。抽查不过，不签字。签字文本需确认门禁通过、INDEX 连续、对比相对固定基线、灰区已处理。</p>
+  </div>
+
+  <div class="callout">
+    <div class="label">本课承诺</div>
+    <p class="para on-dark sm">本课不承诺固定小时内的固定改善百分比。承诺的是：在功能已签出的前提下，你有一条能转、能记、能换挡、能停表的 PPA loop，并且第一圈起就可以按记录工作，而不是按聊天记录猜。</p>
+    <div class="divider" style="background:rgba(247,244,239,.12);margin:10px 0"></div>
+    <p class="para on-dark sm">让模型提出可能，让工具拒绝幻觉，让 INDEX 积累禁忌与最优，让人在该负责处签字。<span class="accent">loop 转起来，PPA 才开始；loop 管起来，PPA 才结束得了。</span></p>
+  </div>
+
+  <div class="rules">
+    <div class="ri"><span class="rl">STEP 01</span>锁版本与基线</div>
+    <div class="ri"><span class="rl">STEP 02</span>诊断·三路·门禁·计分·记账</div>
+    <div class="ri"><span class="rl">STEP 03</span>无改善则换挡</div>
+    <div class="ri"><span class="rl">STEP 04</span>达标或到上限则停表人签</div>
+  </div>
+</div>
+<div class="ftr">
+  <div class="bt">R2芯片智能体<span class="dot">·</span>R2<span class="dot">·</span>CHIP<span class="dot">·</span>AGENT</div>
+  <div class="bt">CHAPTER 07 · 迁移与完成判据</div>
+</div>
+</section>
+
+</body>
+</html>

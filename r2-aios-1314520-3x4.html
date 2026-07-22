@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --text: #141414;
+    --text2: #666666;
+    --text3: #999999;
+    --accent: #E8501F;
+    --rule: #D5D0C8;
+    --rule2: #E8E3DB;
+    --warm-a: #F0ECDF;
+    --warm-b: #E8E3D6;
+    --mono: "SF Mono","Menlo","Consolas","JetBrains Mono",monospace;
+    --sans: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px; height: 1440px;
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .poster {
+    width: 1080px; height: 1440px;
+    padding: 44px 80px 36px;
+    display: flex; flex-direction: column;
+  }
+  /* === A · R2 标签 === */
+  .r2-label {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.18em; margin-bottom: 18px;
+  }
+  /* === 标题块 === */
+  .title-main {
+    font-size: 52px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; line-height: 1.06; margin-bottom: 14px;
+  }
+  .title-main .accent { color: var(--accent); }
+  .subtitle {
+    font-size: 22px; font-weight: 400; color: var(--text2);
+    line-height: 1.45; max-width: 760px;
+  }
+  .subtitle .accent { color: var(--accent); font-weight: 500; }
+  /* === 强调规则线 === */
+  .rule-accent { height: 2px; background: var(--accent); width: 56px; margin: 28px 0 22px; }
+  /* === 区块标题 === */
+  .section-label {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.14em; margin-bottom: 14px;
+  }
+  /* === cat-row 模式 === */
+  .cat-row {
+    display: flex; align-items: baseline;
+    border-top: 1px solid var(--rule2);
+    padding: 12px 0;
+  }
+  .cat-row:first-child { border-top: 2px solid var(--text); }
+  .cat-row:last-child { border-bottom: 2px solid var(--text); }
+  .cat-idx {
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    color: var(--accent); min-width: 52px; flex-shrink: 0;
+  }
+  .cat-title {
+    font-size: 24px; font-weight: 600; color: var(--text);
+    min-width: 230px; flex-shrink: 0;
+  }
+  .cat-detail {
+    font-size: 19px; font-weight: 400; color: var(--text2);
+    line-height: 1.4; flex: 1; overflow-wrap: break-word;
+  }
+  .cat-detail .code { font-family: var(--mono); color: var(--text); font-weight: 500; }
+  /* === 三层栈 (法/术/势) — 暖灰行 === */
+  .stack-row {
+    display: flex; align-items: stretch;
+    border-top: 1px solid var(--rule2);
+    padding: 14px 0;
+  }
+  .stack-row:first-child { border-top: 2px solid var(--text); }
+  .stack-row:last-child { border-bottom: 2px solid var(--text); }
+  .stack-tag {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 64px; height: 38px;
+    background: var(--accent); color: #FFFFFF;
+    font-size: 22px; font-weight: 700;
+    border-radius: 2px; margin-right: 18px; flex-shrink: 0;
+    font-family: var(--mono);
+  }
+  .stack-body { flex: 1; min-width: 0; }
+  .stack-title {
+    font-size: 24px; font-weight: 700; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .stack-detail {
+    font-size: 18px; font-weight: 400; color: var(--text2);
+    line-height: 1.4;
+  }
+  .stack-detail .code { font-family: var(--mono); color: var(--text); font-weight: 500; font-size: 16px; }
+  /* === 底部断言 === */
+  .footer-claim {
+    margin-top: 18px; padding-top: 18px;
+    border-top: 2px solid var(--text);
+  }
+  .footer-claim .line1 {
+    font-size: 20px; font-weight: 600; color: var(--text);
+    line-height: 1.45; margin-bottom: 4px;
+  }
+  .footer-claim .line1 .accent { color: var(--accent); }
+  .footer-claim .line2 {
+    font-size: 16px; font-weight: 400; color: var(--text2);
+    line-height: 1.5;
+  }
+  /* === D · 右下品牌 === */
+  .footer {
+    margin-top: auto; display: flex; justify-content: flex-end;
+    padding-top: 12px;
+  }
+  .footer-mark { display: flex; align-items: center; gap: 8px; }
+  .footer-mark .sq { width: 6px; height: 6px; background: var(--accent); }
+  .footer-mark .txt {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text3); letter-spacing: 0.08em;
+  }
+  /* === 间距 === */
+  .gap-sm { margin-top: 10px; }
+  .gap-md { margin-top: 18px; }
+  .gap-lg { margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- A · R2 标签 -->
+  <div class="r2-label">R2-AIOS · 1314520 · 法 / 术 / 势</div>
+
+  <!-- 标题 -->
+  <h1 class="title-main">R2-AIOS：编译 IC 研发的<span class="accent">操作系统</span></h1>
+  <p class="subtitle">让 <span class="accent">AI 执行</span>，让机器裁判，让 <span class="accent">人签核</span>。秦用法-术-势统一六国，R2 用同一个框架统一芯片研发产线。</p>
+
+  <!-- 橙色强调规则线 -->
+  <div class="rule-accent"></div>
+
+  <!-- 三层栈：法 / 术 / 势 -->
+  <div class="section-label">LAYER STACK · 三层栈 = 总开关</div>
+  <div>
+    <div class="stack-row">
+      <div class="stack-tag">L2</div>
+      <div class="stack-body">
+        <div class="stack-title">内核 · <span style="color:var(--accent)">法</span></div>
+        <div class="stack-detail">四角色 + lean + arch + harness。Harness × Oracle × Memory × Loop 四因子，任一为零整体为零。</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-tag">L3</div>
+      <div class="stack-body">
+        <div class="stack-title">应用层 · <span style="color:var(--accent)">术</span></div>
+        <div class="stack-detail">r2-specx · c2rtl · verismart + 20 个 EDA 工具 + 11 类垂域 Skill。Spec→GDS 怎么落地的执行手段。</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-tag">L1</div>
+      <div class="stack-body">
+        <div class="stack-title">地基 · <span style="color:var(--accent)">势</span></div>
+        <div class="stack-detail">DataLabel · TDD · EDA-CLI + Claude Code 基座 + MCP 协议。数据从哪来、工具怎么接、Agent 跑在哪。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1314520 七项统一 -->
+  <div class="gap-lg">
+    <div class="section-label">1314520 · 七项统一工程（秦始皇六项统一 + R2 第 0 项）</div>
+    <div>
+      <div class="cat-row">
+        <div class="cat-idx">1</div>
+        <div class="cat-title">书同文</div>
+        <div class="cat-detail"><span class="code">r2-specx</span> · 12 类元信息的 SSOT，改一处改一切</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">3</div>
+        <div class="cat-title">车同轨</div>
+        <div class="cat-detail"><span class="code">三刀法</span> · 特性隔离 / 短闭环 / 发布火车，统一调度协议</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">4</div>
+        <div class="cat-title">郡县制</div>
+        <div class="cat-detail"><span class="code">四角色</span> · Harness 内自主，Harness 外 taste，分权不放权</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">5</div>
+        <div class="cat-title">驰道网</div>
+        <div class="cat-detail"><span class="code">五主线</span> · 探索 / 集成 / 交付 / 验证 / 进化，标准与管道共生</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">11</div>
+        <div class="cat-title">统一货币</div>
+        <div class="cat-detail">11 类垂域 Skill · Skill Hub 一套能力通全线</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">20</div>
+        <div class="cat-title">度量衡</div>
+        <div class="cat-detail">20 个 EDA / 独立 Oracle · 全绿才停，杜绝自己判自己</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-idx">0</div>
+        <div class="cat-title">人签核</div>
+        <div class="cat-detail">Agent 跑全绿 → 人签字。系统诚实面对自己边界</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部断言 -->
+  <div class="footer-claim">
+    <div class="line1">秦停在「统一」；<span class="accent">R2 还要「进化」</span>。</div>
+    <div class="line2">Memory + Loop + 知识闭环 = 把势的自我修复能力编译进内核</div>
+  </div>
+
+  <!-- 右下品牌 -->
+  <div class="footer">
+    <div class="footer-mark">
+      <span class="sq"></span>
+      <span class="txt">R2芯片智能体</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

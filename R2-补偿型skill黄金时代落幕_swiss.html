@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>R2-补偿型 skill 黄金时代落幕</title>
+<style>
+  :root {
+    --bg: #F7F4EF;
+    --ink: #1D1D1F;
+    --orange: #E8501F;
+    --warm1: #F0ECDF;
+    --warm2: #E8E3D6;
+    --line: #C9C4BC;
+    --mute: #6E6E73;
+    --dark: #1D1D1F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1440px;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Noto Sans SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" 1;
+  }
+  .poster {
+    width: 1080px;
+    height: 1440px;
+    padding: 0 28px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  /* top ruler */
+  .ruler {
+    height: 6px;
+    margin: 0 -28px;
+    display: flex;
+  }
+  .ruler .o { width: 72px; background: var(--orange); }
+  .ruler .b { flex: 1; background: var(--ink); }
+
+  /* header */
+  header {
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .kicker {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--mute);
+    font-weight: 500;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+    line-height: 1.12;
+  }
+  h1 .r2 { color: var(--orange); }
+  .sub {
+    font-size: 15px;
+    color: var(--mute);
+    font-weight: 400;
+    line-height: 1.35;
+  }
+
+  /* anchor */
+  .anchor {
+    background: var(--dark);
+    color: #F7F4EF;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .anchor .tag {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    color: var(--orange);
+    font-weight: 600;
+    padding-top: 3px;
+  }
+  .anchor .txt {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.2px;
+  }
+  .anchor .txt b { color: var(--orange); font-weight: 600; }
+
+  /* section head */
+  .sec {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-top: 2px;
+  }
+  .sec .num {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: -0.5px;
+  }
+  .sec h2 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .sec .hint {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--mute);
+    letter-spacing: 0.5px;
+  }
+
+  /* mechanism dual */
+  .mech {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    border: 1px solid var(--ink);
+  }
+  .mech .col {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mech .col.good { background: var(--warm1); }
+  .mech .col.bad { background: #fff; }
+  .mech .col h3 {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    font-weight: 600;
+  }
+  .badge.ok { background: var(--ink); color: #F7F4EF; }
+  .badge.warn { background: var(--orange); color: #fff; }
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+  }
+  .chip {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 8px;
+    border: 1px solid var(--ink);
+    background: #fff;
+    line-height: 1.2;
+  }
+  .chip.on { background: var(--ink); color: #F7F4EF; border-color: var(--ink); }
+  .chip.tax { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .arrow {
+    font-size: 12px;
+    color: var(--mute);
+    font-weight: 600;
+  }
+  .mech .mid {
+    background: var(--ink);
+    color: #F7F4EF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+  .side-fx {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .fx {
+    font-size: 12px;
+    padding: 4px 6px;
+    background: var(--warm2);
+    border-left: 3px solid var(--orange);
+    line-height: 1.3;
+  }
+
+  /* end / not end */
+  .vs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .vs-card {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .vs-card .hd {
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vs-card.end .hd { background: var(--ink); color: #F7F4EF; }
+  .vs-card.live .hd { background: var(--warm1); }
+  .vs-card .bd {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .item {
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 5px 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .item b { font-weight: 600; }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+  .dot.blk { background: #F7F4EF; }
+
+  /* equilibrium */
+  .eq {
+    display: grid;
+    grid-template-columns: 1.1fr 0.7fr 1.2fr;
+    border: 1px solid var(--ink);
+    background: var(--warm1);
+  }
+  .eq > div {
+    padding: 9px 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .eq > div + div { border-left: 1px solid var(--ink); }
+  .eq .plus {
+    background: var(--ink);
+    color: #F7F4EF;
+    text-align: center;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .eq span.o { color: var(--orange); font-weight: 600; }
+
+  /* cases 2-col */
+  .cases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .case-col {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .case-col .hd {
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--ink);
+  }
+  .case-col.down .hd { background: var(--ink); color: #F7F4EF; }
+  .case-col.up .hd { background: var(--warm2); }
+  .case-col .rows { display: flex; flex-direction: column; }
+  .row {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .name {
+    padding: 5px 8px;
+    font-weight: 600;
+    background: var(--warm1);
+    border-right: 1px solid var(--line);
+  }
+  .case-col.down .row:nth-child(even) .name { background: var(--warm2); }
+  .case-col.up .row:nth-child(even) .name { background: #fff; }
+  .row .desc { padding: 5px 8px; }
+
+  /* piles */
+  .piles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .pile {
+    border: 1px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+  }
+  .pile .hd {
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pile.a .hd { background: var(--ink); color: #F7F4EF; }
+  .pile.b .hd { background: var(--orange); color: #fff; }
+  .pile.c .hd { background: var(--warm2); }
+  .pile ul {
+    list-style: none;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pile li {
+    font-size: 12px;
+    line-height: 1.3;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pile li:last-child { border-bottom: none; }
+
+  /* audit + path */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+  .audit, .path {
+    border: 1px solid var(--ink);
+  }
+  .audit .hd, .path .hd {
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--warm1);
+    border-bottom: 1px solid var(--ink);
+  }
+  .q {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 6px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.35;
+    align-items: start;
+  }
+  .q:last-child { border-bottom: none; }
+  .q .n {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    color: var(--orange);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .steps {
+    display: flex;
+    flex-direction: column;
+  }
+  .st {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 6px;
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.35;
+    align-items: start;
+  }
+  .st:last-child { border-bottom: none; }
+  .st .n {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 600;
+    color: var(--orange);
+    font-size: 13px;
+  }
+  .st:nth-child(even) { background: var(--warm1); }
+
+  /* mantras */
+  .mantras {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .m {
+    border: 1px solid var(--ink);
+    padding: 7px 7px;
+    background: #fff;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .m .n {
+    font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--orange);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .m p {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* footer */
+  footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid var(--ink);
+    font-size: 12px;
+    color: var(--mute);
+  }
+  footer .sum {
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 13px;
+    max-width: 780px;
+    line-height: 1.35;
+  }
+  footer .sum b { color: var(--orange); }
+  footer .brand {
+    text-align: right;
+    line-height: 1.3;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  footer .brand strong {
+    display: block;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="ruler"><div class="o"></div><div class="b"></div></div>
+
+  <header>
+    <div class="kicker">R2 · COURSE 2606 · #85 · 2026-07</div>
+    <h1><span class="r2">R2-</span>补偿型、重型 skill 的黄金时代正在落幕</h1>
+    <div class="sub">不是 skill 死了——是「用复杂 skill 补偿弱模型」的红利期结束了</div>
+  </header>
+
+  <div class="anchor">
+    <div class="tag">ANCHOR</div>
+    <div class="txt">形态在变：从 always-on 重流程外挂 → <b>轻量、按需、人控触发、领域专精</b>。模型越强，越不该给它戴流程枷锁。</div>
+  </div>
+
+  <!-- 01 mechanism -->
+  <div class="sec">
+    <span class="num">01</span>
+    <h2>机制：两套系统互相确认 = token 烧在无效推理上</h2>
+    <span class="hint">SUPERPOWERS / GPT-5.6</span>
+  </div>
+  <div class="mech">
+    <div class="col good">
+      <h3><span class="badge ok">模型已会</span> 原生 agentic</h3>
+      <div class="flow">
+        <span class="chip on">读架构</span><span class="arrow">→</span>
+        <span class="chip on">规划</span><span class="arrow">→</span>
+        <span class="chip on">执行</span><span class="arrow">→</span>
+        <span class="chip on">收口</span>
+      </div>
+      <div class="side-fx">
+        <div class="fx">OpenAI：5.6 Sol ≈ senior→staff</div>
+        <div class="fx">旧规定式指导 = micromanagement</div>
+      </div>
+    </div>
+    <div class="mid">再叠 = 税</div>
+    <div class="col bad">
+      <h3><span class="badge warn">再叠重 skill</span> Superpowers 等</h3>
+      <div class="flow">
+        <span class="chip tax">再规划</span><span class="arrow">→</span>
+        <span class="chip tax">再确认</span><span class="arrow">→</span>
+        <span class="chip tax">再仪式</span>
+      </div>
+      <div class="side-fx">
+        <div class="fx">token 暴增 ~45%</div>
+        <div class="fx">上下文污染 · 左右互搏</div>
+        <div class="fx">响应变慢 · 误调用</div>
+        <div class="fx">小事过度工程化</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 end vs live -->
+  <div class="sec">
+    <span class="num">02</span>
+    <h2>结束的 / 没结束的 / 新均衡</h2>
+  </div>
+  <div class="vs">
+    <div class="vs-card end">
+      <div class="hd"><span class="dot blk"></span>结束的：补偿型高光期</div>
+      <div class="bd">
+        <div class="item">重型 · 强制 · <b>always-on</b></div>
+        <div class="item">补偿规划 / 纪律的 skill</div>
+        <div class="item">用 skill <b>堆流程</b> 把弱模型抬成高级工程师</div>
+      </div>
+    </div>
+    <div class="vs-card live">
+      <div class="hd"><span class="dot"></span>没结束的：专业包与闸门</div>
+      <div class="bd">
+        <div class="item">可移植专业包 · 工具说明书</div>
+        <div class="item">验收协议 · <b>人机协作闸门</b></div>
+        <div class="item">领域包 · 短约束 · <b>用户主动触发</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="eq">
+    <div>模型原生 agentic</div>
+    <div class="plus">+</div>
+    <div><span class="o">极少</span>必要 skill + memory/文档 · 重 harness 仅：长任务 / 弱模型 / 明确纪律闸门</div>
+  </div>
+
+  <!-- 03 cases -->
+  <div class="sec">
+    <span class="num">03</span>
+    <h2>不止 Superpowers：同一机制下的案例</h2>
+    <span class="hint">退潮 ≠ 无 skill · 形态反了</span>
+  </div>
+  <div class="cases">
+    <div class="case-col down">
+      <div class="hd">↓ 退潮 / 同卸 · 数量本身是税</div>
+      <div class="rows">
+        <div class="row"><div class="name">gstack</div><div class="desc">每会话预载半窗 · 上下文 50%→10%</div></div>
+        <div class="row"><div class="name">Ponytail</div><div class="desc">短 skill 也可有重控制面</div></div>
+        <div class="row"><div class="name">ECC / 全家桶</div><div class="desc">mega-bundle 叠加是税</div></div>
+        <div class="row"><div class="name">GSD 流程包</div><div class="desc">重流程被模型内化后集体过期</div></div>
+        <div class="row"><div class="name">20+ bundles</div><div class="desc">规定式指导 → micromanagement</div></div>
+        <div class="row"><div class="name">zombie skill</div><div class="desc">不触发仍占上下文 · 需审计扫除</div></div>
+      </div>
+    </div>
+    <div class="case-col up">
+      <div class="hd">↑ 仍看好 · 给人 superpowers</div>
+      <div class="rows">
+        <div class="row"><div class="name">人主导拷问</div><div class="desc">grill-me · 不抢 agent 方向</div></div>
+        <div class="row"><div class="name">轻量模块</div><div class="desc">slash 手动触发 · 可组合可控</div></div>
+        <div class="row"><div class="name">领域/确定</div><div class="desc">SOP · 私有标准模型不会自带</div></div>
+        <div class="row"><div class="name">验收型</div><div class="desc">多模型 review · CI · 补验证</div></div>
+        <div class="row"><div class="name">项目边界</div><div class="desc">AGENTS.md · 停止条件 · 非接管</div></div>
+        <div class="row"><div class="name">工具说明书</div><div class="desc">MCP/CLI 用法与失败处理</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 piles -->
+  <div class="sec">
+    <span class="num">04</span>
+    <h2>三堆分类 · 默认假设：6 个月前的 skill 可能已过期</h2>
+  </div>
+  <div class="piles">
+    <div class="pile a">
+      <div class="hd">🗑 归档（默认）</div>
+      <ul>
+        <li>Superpowers / gstack 类</li>
+        <li>全流程 TDD 强制包</li>
+        <li>重复专家人设</li>
+        <li>半年未调用的</li>
+        <li>Agent 自写无评测 skill</li>
+      </ul>
+    </div>
+    <div class="pile b">
+      <div class="hd">⚡ 按需（手动 /slash）</div>
+      <ul>
+        <li>grill-me / 出计划拷问</li>
+        <li>领域：Ads / 设计 / 合规</li>
+        <li>review / 测试 / CI babysit</li>
+        <li>单次大重构 / 去 slop</li>
+      </ul>
+    </div>
+    <div class="pile c">
+      <div class="hd">🔒 常驻（尽量 ≤5）</div>
+      <ul>
+        <li>安全边界、权限</li>
+        <li>停止条件、完成标准</li>
+        <li>仓库事实、命令、风格</li>
+        <li>memory 偏好</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 05 audit + path -->
+  <div class="sec">
+    <span class="num">05</span>
+    <h2>四问审计 + 空跑一周 · delete before add</h2>
+    <span class="hint">真正审的是：谁拿走了任务控制权</span>
+  </div>
+  <div class="bottom">
+    <div class="audit">
+      <div class="hd">每个 skill 四问</div>
+      <div class="q"><span class="n">01</span><span>卸了之后，质量/速度是否差不多或更好？→ 是则删/归档</span></div>
+      <div class="q"><span class="n">02</span><span>补偿规划/纪律，还是提供领域事实/工具/验收？→ 补偿型优先删</span></div>
+      <div class="q"><span class="n">03</span><span>always-on 还是用户显式调用？→ always-on 默认关</span></div>
+      <div class="q"><span class="n">04</span><span>删掉「Be thorough / ALWAYS…」后行为有变吗？→ 无变 = no-op 砍段</span></div>
+    </div>
+    <div class="path">
+      <div class="hd">默认动作：先空跑一周</div>
+      <div class="steps">
+        <div class="st"><span class="n">1</span><span>备份 skill 列表</span></div>
+        <div class="st"><span class="n">2</span><span>全卸补偿型 mega-bundle</span></div>
+        <div class="st"><span class="n">3</span><span>只留 CLAUDE/AGENTS.md + memory + 手动 1～3 个</span></div>
+        <div class="st"><span class="n">4</span><span>强模型跑真实任务 3～7 天</span></div>
+        <div class="st"><span class="n">5</span><span>只把明显更好的加回来</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 mantras -->
+  <div class="sec">
+    <span class="num">06</span>
+    <h2>决策口诀 · 下一阶段：少而硬、人控触发、领域专精</h2>
+  </div>
+  <div class="mantras">
+    <div class="m"><div class="n">01</div><p>模型会了→删流程；不会→留事实/工具/验收</p></div>
+    <div class="m"><div class="n">02</div><p>给人 superpowers &gt; 给 agent 强制全流程</p></div>
+    <div class="m"><div class="n">03</div><p>历史 skill 有保质期；没评测 = 技术债</p></div>
+    <div class="m"><div class="n">04</div><p>常驻越少越好；重技能按需调用</p></div>
+    <div class="m"><div class="n">05</div><p>卸载不是失败，是升模型后的维护</p></div>
+  </div>
+
+  <footer>
+    <div class="sum">路径：<b>审计 → 默认删除 → 按需加回 → 新模型就重审</b> · Skill 还在，玩法从「堆外挂」变成「少而硬的边界与验证」</div>
+    <div class="brand"><strong>R2芯片智能体</strong>R2 · CHIP · AGENT</div>
+  </footer>
+</div>
+</body>
+</html>

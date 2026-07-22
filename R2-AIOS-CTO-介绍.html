@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>R2芯片智能体操作系统 · CTO介绍</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#F7F4EF;color:#141414;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","SF Pro Display","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ── Slide container ── */
+.deck{position:relative;width:1920px;height:1080px}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:80px 120px;overflow:hidden}
+.slide.active{display:flex}
+
+/* ── Typography ── */
+.slogan{font-size:28px;font-weight:600;color:#E8501F;letter-spacing:2px}
+.headline{font-size:72px;font-weight:700;line-height:1.15;letter-spacing:-1px;color:#141414}
+.subhead{font-size:36px;font-weight:400;line-height:1.5;color:#5F5E5A;margin-top:16px}
+.body-text{font-size:28px;line-height:1.7;color:#2C2C2A}
+.label{font-size:18px;font-weight:600;color:#888780;letter-spacing:1px;text-transform:uppercase}
+.small{font-size:20px;color:#888780}
+.accent{color:#E8501F}
+
+/* ── Layout helpers ── */
+.flex-center{display:flex;align-items:center;justify-content:center}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.gap-24{gap:24px}.gap-48{gap:48px}.gap-64{gap:64px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:64px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+
+/* ── Cards ── */
+.card{background:#fff;border-radius:16px;padding:40px;border:0.5px solid rgba(0,0,0,.06);box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card-accent{border-left:4px solid #E8501F}
+
+/* ── Navigation ── */
+.nav{position:fixed;bottom:32px;right:48px;display:flex;gap:12px;z-index:100}
+.nav button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#fff;color:#141414;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav button:hover{background:#141414;color:#F7F4EF}
+.counter{position:fixed;bottom:38px;left:48px;font-size:16px;color:#888780;font-variant-numeric:tabular-nums;z-index:100}
+
+/* ── Speaker notes ── */
+.notes-toggle{position:fixed;top:24px;right:48px;z-index:200;font-size:14px;color:#888780;cursor:pointer;border:1px solid rgba(0,0,0,.1);background:#fff;padding:6px 14px;border-radius:20px}
+.notes-toggle:hover{color:#141414}
+.notes{display:none !important}
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:#141414;color:#F7F4EF;padding:24px 80px;font-size:22px;line-height:1.6;z-index:150;display:none;max-height:200px;overflow-y:auto}
+.notes-panel.show{display:block}
+.notes-panel .notes-label{font-size:14px;color:#E8501F;font-weight:600;letter-spacing:1px;margin-bottom:8px}
+
+/* ── Decorative elements ── */
+.dot-line{height:1px;background:linear-gradient(90deg,#141414 0%,transparent 100%);margin:24px 0}
+.tag{display:inline-block;padding:6px 16px;border-radius:8px;font-size:18px;font-weight:600}
+.tag-purple{background:#EEEDFE;color:#534AB7}
+.tag-blue{background:#E6F1FB;color:#185FA5}
+.tag-green{background:#E1F5EE;color:#0F6E56}
+.tag-orange{background:#FAEEDA;color:#854F0B}
+.tag-lime{background:#EAF3DE;color:#3B6D11}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp .6s ease-out both}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}.delay-5{animation-delay:.5s}
+
+/* ── Specific slides ── */
+
+/* S1 Cover */
+.cover-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(232,80,31,.06) 0%,transparent 60%);pointer-events:none}
+.cover-number{font-size:240px;font-weight:800;color:#141414;opacity:.06;position:absolute;right:80px;top:50%;transform:translateY(-50%);letter-spacing:-8px;pointer-events:none}
+
+/* S2 Pain points */
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px}
+.pain-card{padding:32px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,.06)}
+.pain-card .icon{font-size:40px;margin-bottom:16px}
+.pain-card h3{font-size:24px;font-weight:700;margin-bottom:8px}
+.pain-card p{font-size:18px;color:#5F5E5A;line-height:1.5}
+
+/* S3 1314520 */
+.digit-row{display:flex;gap:32px;margin-top:48px}
+.digit-card{flex:1;background:#fff;border-radius:16px;padding:32px 24px;text-align:center;border:1px solid rgba(0,0,0,.06)}
+.digit-card .num{font-size:64px;font-weight:800;color:#E8501F;line-height:1}
+.digit-card .desc{font-size:18px;color:#2C2C2A;margin-top:12px;line-height:1.4}
+.digit-card .name{font-size:14px;color:#888780;margin-top:4px}
+
+/* S4 Three systems */
+.sys-col{display:flex;flex-direction:column;gap:16px}
+.sys-header{padding:20px 28px;border-radius:12px 12px 0 0;font-size:22px;font-weight:700;color:#fff}
+.sys-body{background:#fff;border:1px solid rgba(0,0,0,.06);border-top:none;border-radius:0 0 12px 12px;padding:24px;flex:1}
+.sys-item{padding:10px 0;border-bottom:1px solid rgba(0,0,0,.04);font-size:17px;display:flex;align-items:center;gap:10px}
+.sys-item:last-child{border-bottom:none}
+.sys-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* S5 Tech */
+.tech-highlight{background:#141414;color:#F7F4EF;border-radius:20px;padding:48px;margin-top:40px}
+.tech-highlight h3{font-size:32px;font-weight:700;color:#E8501F;margin-bottom:12px}
+.tech-highlight p{font-size:22px;color:#C9C4BC;line-height:1.6}
+
+/* S6 Path */
+.path-visual{display:flex;align-items:center;gap:0;margin-top:48px}
+.path-node{flex:1;text-align:center;padding:24px 16px;position:relative}
+.path-node .circle{width:72px;height:72px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff}
+.path-node .title{font-size:22px;font-weight:700;margin-bottom:6px}
+.path-node .desc{font-size:15px;color:#5F5E5A;line-height:1.4}
+.path-arrow{width:64px;height:2px;background:#C9C4BC;position:relative;flex-shrink:0}
+.path-arrow::after{content:'';position:absolute;right:0;top:-4px;border:6px solid transparent;border-left:10px solid #C9C4BC}
+
+/* S7 Flow */
+.flow-container{display:flex;align-items:center;justify-content:center;gap:0;margin-top:40px}
+.flow-step{background:#fff;border-radius:12px;padding:20px 28px;border:1px solid rgba(0,0,0,.08);text-align:center;min-width:160px}
+.flow-step h4{font-size:18px;font-weight:700;margin-bottom:6px}
+.flow-step p{font-size:14px;color:#5F5E5A}
+.flow-arrow{font-size:28px;color:#E8501F;margin:0 12px}
+.pattern-row{display:flex;gap:16px;margin-top:32px;justify-content:center}
+.pattern-chip{padding:10px 20px;border-radius:20px;background:#F5F4EF;border:1px solid rgba(0,0,0,.08);font-size:16px;color:#2C2C2A}
+
+/* S8 Progress */
+.progress-table{margin-top:32px}
+.progress-row{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.04);font-size:20px}
+.progress-row:last-child{border-bottom:none}
+.progress-row .name{flex:1;font-weight:500}
+.progress-row .status{padding:4px 12px;border-radius:6px;font-size:14px;font-weight:600}
+.status-green{background:#EAF3DE;color:#3B6D11}
+.status-blue{background:#E6F1FB;color:#185FA5}
+.status-red{background:#FDE8E0;color:#C0392B}
+
+/* S9 Roles */
+.role-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}
+.role-card{background:#fff;border-radius:16px;padding:32px 24px;text-align:center;border:1px solid rgba(0,0,0,.06);position:relative}
+.role-card .role-letter{font-size:48px;font-weight:800;color:#E8501F}
+.role-card .role-name{font-size:22px;font-weight:700;margin-top:8px}
+.role-card .role-desc{font-size:16px;color:#5F5E5A;margin-top:6px;line-height:1.4}
+.feedback-loop{margin-top:32px;display:flex;align-items:center;justify-content:center;gap:16px}
+.feedback-loop .arrow{font-size:24px;color:#E8501F}
+.feedback-loop .box{background:#141414;color:#F7F4EF;padding:12px 24px;border-radius:8px;font-size:18px;font-weight:600}
+
+/* S10 CTA */
+.cta-big{font-size:96px;font-weight:800;line-height:1.15;text-align:center;margin-top:48px}
+.cta-sub{font-size:32px;text-align:center;color:#5F5E5A;margin-top:24px}
+.action-row{display:flex;gap:32px;justify-content:center;margin-top:64px}
+.action-card{background:#fff;border-radius:16px;padding:32px 40px;flex:1;max-width:520px;text-align:center;border:1px solid rgba(0,0,0,.06)}
+.action-card h3{font-size:24px;font-weight:700;margin-bottom:8px}
+.action-card p{font-size:18px;color:#5F5E5A;line-height:1.5}
+.action-card .time{font-size:16px;color:#E8501F;font-weight:600;margin-top:8px}
+
+/* ── Section label top-left ── */
+.section-label{position:absolute;top:48px;left:120px;font-size:16px;font-weight:600;color:#888780;letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ═══════════ SLIDE 1 · COVER ═══════════ -->
+<div class="slide active" id="s1">
+  <div class="cover-bg"></div>
+  <div class="cover-number">1314520</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1">
+    <div class="label animate delay-1">R2 芯片智能体</div>
+    <div class="headline animate delay-2" style="margin-top:16px">芯片研发操作系统</div>
+    <div class="subhead animate delay-3">把芯片研发编译成可签核的智能产线</div>
+    <div class="slogan animate delay-4" style="margin-top:48px">让 AI 执行，让机器裁判，让人签核</div>
+    <div class="small animate delay-5" style="margin-top:32px">面向 CTO 与技术骨干 · 30分钟介绍 · 2026-07-21</div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 2 · PAIN → VISION ═══════════ -->
+<div class="slide" id="s2">
+  <div class="section-label">WHY R2-AIOS</div>
+  <div class="headline animate" style="font-size:56px">芯片研发的经验，不该只住在人脑里</div>
+  <div class="subhead animate delay-1">Debug 占 40% 时间，Skill 保质期只有 90 天，经验无法复用</div>
+
+  <div class="pain-grid animate delay-2">
+    <div class="pain-card">
+      <div class="icon">⏱</div>
+      <h3>调试成本高</h3>
+      <p>Debug 占工程师 40% 时间，出错后靠个人经验定位，无法形成组织记忆</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">📄</div>
+      <h3>文档是僵尸</h3>
+      <p>团队经验沉淀为 md 文档，但没人维护、过期无人知、新人不会读</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">🔗</div>
+      <h3>流程断裂</h3>
+      <p>Spec→RTL→验证→集成各阶段工具割裂，状态靠人传递，容易丢失</p>
+    </div>
+  </div>
+
+  <div class="tech-highlight animate delay-3">
+    <h3>愿景：编译 IC 研发操作系统</h3>
+    <p>借鉴秦的「法/术/势」——统一标准（法）、统一工具链（术）、统一指挥链（势）。<br>把芯片研发编译成可反馈、可验证、可复用、可签核的工作流体系。</p>
+  </div>
+
+  <div class="notes">【演讲备注】开场用痛点建立共鸣。CTO关心ROI——经验资产化就是降低人员流动风险。技术骨干关心机制——为什么Skill比md文档有效。类比秦始皇：书同文=specx，车同轨=三刀法，驰道网=五主线。</div>
+</div>
+
+<!-- ═══════════ SLIDE 3 · 1314520 ═══════════ -->
+<div class="slide" id="s3">
+  <div class="section-label">PRODUCT CORE</div>
+  <div class="headline animate" style="font-size:56px">1314520：一套芯片研发的操作系统内核</div>
+  <div class="subhead animate delay-1">每一个数字都是一层确定性保障</div>
+
+  <div class="digit-row animate delay-2">
+    <div class="digit-card">
+      <div class="num">1</div>
+      <div class="desc">r2-specx<br>真理源</div>
+      <div class="name">PDF spec → 结构化数据<br>6条产线同源</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">3</div>
+      <div class="desc">三刀法</div>
+      <div class="name">特性隔离 · 短闭环 · 发布火车<br>最小化试错成本</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">11</div>
+      <div class="desc">垂域 Skills</div>
+      <div class="name">文档数字化 · C2RTL · RegGen<br>SoC集成 · PR优化 · SkillGen…</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">4</div>
+      <div class="desc">四角色</div>
+      <div class="name">Peter · Andy · Vicky · Fred<br>负反馈闭环</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">5</div>
+      <div class="desc">五条主线</div>
+      <div class="name">分钟→周级交付压缩<br>五阶段成长路径</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">20</div>
+      <div class="desc">r2-eda</div>
+      <div class="name">20类定制EDA CLI<br>智能引擎确定底座</div>
+    </div>
+    <div class="digit-card">
+      <div class="num">0</div>
+      <div class="desc">条件独立</div>
+      <div class="name">两条条件独立 + 人签核兜底<br>Agent不越权</div>
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】这是全篇最重要的一页。1314520不是口号，是架构约束。强调"0"——人签核兜底，这不是纯自动化，是人在回路。CTO会关注风险控制。</div>
+</div>
+
+<!-- ═══════════ SLIDE 4 · THREE SYSTEMS ═══════════ -->
+<div class="slide" id="s4">
+  <div class="section-label">ARCHITECTURE</div>
+  <div class="headline animate" style="font-size:52px">三大子系统：从底座到架构到验证</div>
+  <div class="subhead animate delay-1">20项能力，覆盖芯片研发全生命周期</div>
+
+  <div class="grid-3 animate delay-2" style="margin-top:40px;flex:1">
+    <!-- P1 -->
+    <div class="sys-col" style="flex:1">
+      <div class="sys-header" style="background:#534AB7">P1 · R2-AIOS-1314520</div>
+      <div class="sys-body">
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-specx — PDF spec 编译引擎</div>
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-loop — 循环工程记忆飞轮</div>
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-skill — 经验资产化</div>
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-eda — 20类定制EDA CLI</div>
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-knowledge — 决策飞轮知识库</div>
+        <div class="sys-item"><span class="dot" style="background:#534AB7"></span>r2-4role — Peter/Andy/Vicky/Fred</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,.06)">
+          <div class="small">关键词：编译引擎 · 记忆飞轮 · 经验IP化</div>
+        </div>
+      </div>
+    </div>
+    <!-- P2 -->
+    <div class="sys-col" style="flex:1">
+      <div class="sys-header" style="background:#185FA5">P2 · R2-Arch</div>
+      <div class="sys-body">
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-harness — 持续交付可工作内容</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-3way — 三刀法架构探索</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-ip — IP集成进SoC</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-arch — 九步收敛法</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-cbbrtl — CBB标注四维映射</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-c2rtl — 错题驱动编译Verilog</div>
+        <div class="sys-item"><span class="dot" style="background:#185FA5"></span>r2-soc-integration — 开放集成平台</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,.06)">
+          <div class="small">关键词：三刀法 · 九步收敛 · 错题驱动</div>
+        </div>
+      </div>
+    </div>
+    <!-- P3 -->
+    <div class="sys-col" style="flex:1">
+      <div class="sys-header" style="background:#0F6E56">P3 · R2-Verismart-AIOS</div>
+      <div class="sys-body">
+        <div class="sys-item"><span class="dot" style="background:#0F6E56"></span>r2-vplan — 人和Agent都好用</div>
+        <div class="sys-item"><span class="dot" style="background:#0F6E56"></span>r2-cov — 都江堰模型覆盖率</div>
+        <div class="sys-item"><span class="dot" style="background:#0F6E56"></span>r2-debug — 八段闭环负反馈</div>
+        <div class="sys-item"><span class="dot" style="background:#0F6E56"></span>R2-Verismart-AIOS — DUT为中心</div>
+        <div class="sys-item"><span class="dot" style="background:#0F6E56"></span>r2-dvbuild — 响应式柔性流水线</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,.06)">
+          <div class="small">关键词：VPlan · 覆盖率 · 波形断言</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】这一页给技术骨干看全景。强调三个子系统的递进关系：P1建底座→P2做架构→P3做验证。每个系统都有具体的skill名，不是空概念。</div>
+</div>
+
+<!-- ═══════════ SLIDE 5 · TECH MECHANISMS ═══════════ -->
+<div class="slide" id="s5">
+  <div class="section-label">TECH DEEP DIVE</div>
+  <div class="headline animate" style="font-size:52px">三个核心技术机制</div>
+  <div class="subhead animate delay-1">Thin Harness, Fat Skill — 让知识活过90天</div>
+
+  <div class="grid-3 animate delay-2" style="margin-top:40px;flex:1">
+    <div class="card card-accent" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="tag tag-purple" style="margin-bottom:16px">机制一</div>
+      <h3 style="font-size:28px;font-weight:700;margin-bottom:16px">r2-specx 编译引擎</h3>
+      <p class="body-text">PDF spec → 结构化JSON → 机器可读 → 驱动交付闭环。<br><br>传统方式：人读spec，手写RTL，人工对比差异。<br>R2方式：spec本身就是编译单元，变更自动触发回归。</p>
+    </div>
+    <div class="card card-accent" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="tag tag-green" style="margin-bottom:16px">机制二</div>
+      <h3 style="font-size:28px;font-weight:700;margin-bottom:16px">Skill 是 IP，不是便利贴</h3>
+      <p class="body-text">Skill ≠ md文档。Skill有结构约束、反馈回路、组织背书。<br><br>判断标准：删掉这一层剩下什么？<br>剩下手工流程 = 泥球<br>剩下裸机 = 真OS</p>
+    </div>
+    <div class="card card-accent" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="tag tag-orange" style="margin-bottom:16px">机制三</div>
+      <h3 style="font-size:28px;font-weight:700;margin-bottom:16px">Debug 波形断言</h3>
+      <p class="body-text">波形不是"查波形工具"，而是时序行为编码成可自动检查的SVA/assertion。<br><br>仿真中自动 PASS/FAIL，不依赖人肉review。<br>与r2-debug工具链不同维度——Oracle裁判体系。</p>
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】这是技术骨干最关心的页面。重点讲"Skill vs md"的判断标准——用户强调过这是核心概念。波形断言要强调"跟r2-debug毫无关系"，Oracle裁判是判决标准，r2-debug是debug工具链。</div>
+</div>
+
+<!-- ═══════════ SLIDE 6 · LEARNING PATH ═══════════ -->
+<div class="slide" id="s6">
+  <div class="section-label">GROWTH PATH</div>
+  <div class="headline animate" style="font-size:52px">从执行者到编排者：5个月，21篇实战笔记</div>
+  <div class="subhead animate delay-1">不是理论课，是先立OS图景，再跑通第一个交付</div>
+
+  <div class="path-visual animate delay-2">
+    <div class="path-node">
+      <div class="circle" style="background:#534AB7">M1</div>
+      <div class="title">跑通</div>
+      <div class="desc">先立OS图景<br>交付UART/IP</div>
+    </div>
+    <div class="path-arrow"></div>
+    <div class="path-node">
+      <div class="circle" style="background:#185FA5">M2</div>
+      <div class="title">认知</div>
+      <div class="desc">理解为什么<br>选型·差距·协作</div>
+    </div>
+    <div class="path-arrow"></div>
+    <div class="path-node">
+      <div class="circle" style="background:#0F6E56">M3</div>
+      <div class="title">进阶</div>
+      <div class="desc">从执行者<br>到指挥者</div>
+    </div>
+    <div class="path-arrow"></div>
+    <div class="path-node">
+      <div class="circle" style="background:#854F0B">M4</div>
+      <div class="title">刷loop</div>
+      <div class="desc">串AI流水线<br>跑起来</div>
+    </div>
+    <div class="path-arrow"></div>
+    <div class="path-node">
+      <div class="circle" style="background:#3B6D11">M5</div>
+      <div class="title">进化</div>
+      <div class="desc">执行者→<br>编排者</div>
+    </div>
+  </div>
+
+  <div class="grid-3 animate delay-3" style="margin-top:48px">
+    <div class="card" style="padding:24px">
+      <div class="small" style="margin-bottom:8px">M1 · 5篇</div>
+      <div class="body-text" style="font-size:20px">5分钟上手UART → 8h开发EDA平替 → 24h交付工业级IP</div>
+    </div>
+    <div class="card" style="padding:24px">
+      <div class="small" style="margin-bottom:8px">M2-M3 · 7篇</div>
+      <div class="body-text" style="font-size:20px">R2-AIOS编译IC OS → AI写RTL快100倍 → Debug占40%怎么变</div>
+    </div>
+    <div class="card" style="padding:24px">
+      <div class="small" style="margin-bottom:8px">M4-M5 · 9篇</div>
+      <div class="body-text" style="font-size:20px">循环工程提示词 → Skill进化论 → harness保质期90天</div>
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】强调这不是培训体系，是实战记录。每篇笔记都是真实项目产出。M1的"5分钟交付UART"是Hook——让新人第一天就有成就感。</div>
+</div>
+
+<!-- ═══════════ SLIDE 7 · MULTI-AGENT FLOW ═══════════ -->
+<div class="slide" id="s7">
+  <div class="section-label">AGENT ORCHESTRATION</div>
+  <div class="headline animate" style="font-size:52px">SoC集成：7个Agent串联的多步骤流水线</div>
+  <div class="subhead animate delay-1">状态在步骤间流动，关键决策点保留给人</div>
+
+  <div class="flow-container animate delay-2">
+    <div class="flow-step">
+      <h4>IPExtract</h4>
+      <p>提取IP元信息</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <h4>BridgeGen</h4>
+      <p>生成桥接逻辑</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <h4>Topology</h4>
+      <p>6-Pass拓扑</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <h4>RTLGen</h4>
+      <p>生成RTL代码</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:#E8501F">
+      <h4>人签核</h4>
+      <p>最终确认</p>
+    </div>
+  </div>
+
+  <div class="pattern-row animate delay-3">
+    <div class="pattern-chip">单Agent + 单Skill → 简单转换</div>
+    <div class="pattern-chip">多Agent串联 → 复杂流水线</div>
+    <div class="pattern-chip">Agent并行 + Skill聚合 → 多视角分析</div>
+    <div class="pattern-chip">人机决策点嵌入 → 关键步骤确认</div>
+    <div class="pattern-chip">状态机编排 → 条件分支流程</div>
+  </div>
+
+  <div class="grid-4 animate delay-4" style="margin-top:32px">
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:32px;font-weight:800;color:#534AB7">①</div>
+      <div class="small">文档数字化</div>
+    </div>
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:32px;font-weight:800;color:#185FA5">②</div>
+      <div class="small">算法到硬件</div>
+    </div>
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:32px;font-weight:800;color:#0F6E56">③</div>
+      <div class="small">寄存器与文档</div>
+    </div>
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:32px;font-weight:800;color:#E8501F">④⭐</div>
+      <div class="small">SoC集成</div>
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】SoC集成是最匹配的场景。强调状态传递——数据在步骤间流动，不是每个Agent各干各的。人机决策点嵌入是关键设计，不是纯自动化。</div>
+</div>
+
+<!-- ═══════════ SLIDE 8 · PROGRESS ═══════════ -->
+<div class="slide" id="s8">
+  <div class="section-label">DELIVERY STATUS</div>
+  <div class="headline animate" style="font-size:52px">已交付成果：20项中的确定进度</div>
+  <div class="subhead animate delay-1">可反馈 · 可验证 · 可复用 · 可签核</div>
+
+  <div class="progress-table animate delay-2" style="margin-top:32px">
+    <div style="display:flex;gap:16px;margin-bottom:24px">
+      <span style="display:flex;align-items:center;gap:6px;font-size:16px;color:#5F5E5A"><span style="width:12px;height:12px;border-radius:3px;background:#3B6D11;display:inline-block"></span>MD+MP4齐套</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:16px;color:#5F5E5A"><span style="width:12px;height:12px;border-radius:3px;background:#185FA5;display:inline-block"></span>有MD无片</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:16px;color:#5F5E5A"><span style="width:12px;height:12px;border-radius:3px;background:#E8501F;display:inline-block"></span>双缺</span>
+    </div>
+
+    <div class="progress-row"><span class="name">r2-eda（20类定制EDA）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-knowledge（决策飞轮知识库）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-4role（四角色闭环）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">芯片架构三刀法</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">R2-Verismart-AIOS</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-harness（效率来自反馈）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-vplan（VPlan）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-dvbuild（柔性验证流水线）</span><span class="status status-green">齐套</span></div>
+    <div class="progress-row"><span class="name">r2-soc-integration</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-arch（九步收敛）</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-c2rtl（错题驱动Verilog）</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-cbbrtl（CBB标注）</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-ip（IP集成）</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-debug（八段闭环）</span><span class="status status-blue">有MD</span></div>
+    <div class="progress-row"><span class="name">r2-cov（都江堰模型）</span><span class="status status-blue">有MD</span></div>
+  </div>
+
+  <div class="notes">【演讲备注】数据来自课程地图真实状态。绿=MD+MP4齐套（8项），蓝=有MD无片（7项），红=双缺（0项）。说明主体已完成，缺口在mp4制作。</div>
+</div>
+
+<!-- ═══════════ SLIDE 9 · ROLES & FEEDBACK ═══════════ -->
+<div class="slide" id="s9">
+  <div class="section-label">TEAM MODEL</div>
+  <div class="headline animate" style="font-size:52px">四角色同构：Peter、Andy、Vicky、Fred</div>
+  <div class="subhead animate delay-1">Agent做推理+决策，Skill做执行+生成，人做最终签核</div>
+
+  <div class="role-row animate delay-2">
+    <div class="role-card">
+      <div class="role-letter">P</div>
+      <div class="role-name">Peter</div>
+      <div class="role-desc">设目标<br>定义问题边界</div>
+    </div>
+    <div class="role-card">
+      <div class="role-letter">A</div>
+      <div class="role-name">Andy</div>
+      <div class="role-desc">做设计<br>RTL/代码/架构</div>
+    </div>
+    <div class="role-card">
+      <div class="role-letter">V</div>
+      <div class="role-name">Vicky</div>
+      <div class="role-desc">当裁判<br>审查/验证/判决</div>
+    </div>
+    <div class="role-card">
+      <div class="role-letter">F</div>
+      <div class="role-name">Fred</div>
+      <div class="role-desc">建产线<br>流程/工具/自动化</div>
+    </div>
+  </div>
+
+  <div class="feedback-loop animate delay-3">
+    <div class="box">Peter 设目标</div>
+    <div class="arrow">→</div>
+    <div class="box">Andy 做设计</div>
+    <div class="arrow">→</div>
+    <div class="box">Vicky 审查</div>
+    <div class="arrow">→</div>
+    <div class="box">Fred 建产线</div>
+    <div class="arrow">↩</div>
+    <div class="box" style="border:2px solid #E8501F">负反馈回流</div>
+  </div>
+
+  <div class="card animate delay-4" style="margin-top:40px;max-width:1200px;margin-left:auto;margin-right:auto;text-align:center">
+    <div style="font-size:24px;font-weight:700;margin-bottom:12px">人-AI-EDA 三元边界</div>
+    <div style="font-size:20px;color:#5F5E5A;line-height:1.6">
+      <strong>Agent</strong> = 推理 + 决策（理解、分析、判断）<br>
+      <strong>Skill</strong> = 执行 + 生成（确定性输出：代码、图表、文件操作）<br>
+      <strong>人</strong> = 最终签核（关键决策点保留给人类）
+    </div>
+  </div>
+
+  <div class="notes">【演讲备注】四角色不是人岗，是功能角色——一个人可以兼任多个角色。强调负反馈：Vicky的审查结果回流到Andy和Peter，形成闭环。这是系统能自我改进的核心机制。</div>
+</div>
+
+<!-- ═══════════ SLIDE 10 · CTA ═══════════ -->
+<div class="slide" id="s10">
+  <div class="cover-bg"></div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;z-index:1;text-align:center">
+    <div class="label animate delay-1">NEXT STEPS</div>
+    <div class="cta-big animate delay-2">从试点到量产<br><span class="accent">选一个场景，跑通一条产线</span></div>
+
+    <div class="action-row animate delay-3">
+      <div class="action-card">
+        <h3>近期 · POC</h3>
+        <p>选定1-2个垂域场景做端到端验证<br>推荐：SoC集成 或 寄存器生成</p>
+        <div class="time">4周内出结果</div>
+      </div>
+      <div class="action-card">
+        <h3>中期 · 压缩</h3>
+        <p>五条主线从"周"级交付<br>压缩到"分钟"级</p>
+        <div class="time">季度目标</div>
+      </div>
+      <div class="action-card">
+        <h3>长期 · 标准</h3>
+        <p>R2-AIOS成为<br>芯片研发行业标准OS</p>
+        <div class="accent" style="font-weight:700">行业定义者</div>
+      </div>
+    </div>
+
+    <div class="slogan animate delay-4" style="margin-top:64px;font-size:36px">让 AI 执行，让机器裁判，让人签核</div>
+    <div class="small animate delay-5" style="margin-top:24px">R2 芯片智能体 · 2026</div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<div class="counter" id="counter">1 / 10</div>
+<div class="nav">
+  <button onclick="prev()" title="上一页">←</button>
+  <button onclick="next()" title="下一页">→</button>
+</div>
+
+<!-- Notes toggle -->
+<div class="notes-toggle" onclick="toggleNotes()">备注</div>
+<div class="notes-panel" id="notesPanel">
+  <div class="notes-label">演讲备注</div>
+  <div id="notesContent"></div>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+const notesPanel = document.getElementById('notesPanel');
+const notesContent = document.getElementById('notesContent');
+
+function showSlide(i) {
+  slides.forEach((s, idx) => {
+    s.classList.toggle('active', idx === i);
+    // Re-trigger animations
+    if (idx === i) {
+      s.querySelectorAll('.animate').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = '';
+      });
+    }
+  });
+  current = i;
+  counter.textContent = (i + 1) + ' / ' + slides.length;
+  // Update notes
+  const note = slides[i].querySelector('.notes');
+  notesContent.innerHTML = note ? note.textContent.replace('【演讲备注】','') : '（无备注）';
+}
+
+function next() { if (current < slides.length - 1) showSlide(current + 1); }
+function prev() { if (current > 0) showSlide(current - 1); }
+function toggleNotes() { notesPanel.classList.toggle('show'); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'n' || e.key === 'N') toggleNotes();
+  if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+  if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+});
+
+// Fullscreen on double click
+document.addEventListener('dblclick', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+});
+
+showSlide(0);
+</script>
+</body>
+</html>
